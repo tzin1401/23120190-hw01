@@ -1,0 +1,9 @@
+# Tệp tạm của hệ điều hành và trình soạn thảo
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+~$*
+
+# Bản xuất lịch sử có thể tạo lại từ Git
+Git_Commit_Log.txt
