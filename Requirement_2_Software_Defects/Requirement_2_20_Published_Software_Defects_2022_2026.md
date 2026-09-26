@@ -58,7 +58,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng, CVSS 9,3 theo hồ sơ CVE của Microsoft**.
 - **Hậu quả:** Nguy cơ lộ dữ liệu nội bộ qua mạng mà người dùng không hay biết. Đây là khả năng đã được nghiên cứu chứng minh; nguồn của Microsoft **không xác nhận một vụ khai thác khách hàng thực tế**.
 - **Cách khắc phục:** Microsoft đã phát hành cập nhật cho dịch vụ; tổ chức nên giữ quyền truy cập tối thiểu, rà soát dữ liệu Copilot được phép đọc và giám sát đầu vào có dấu hiệu prompt injection.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #06 (ảo giác về chuỗi khai thác):** Trong câu trả lời của **OpenCode – Big Pickle, 23:27 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI khẳng định Copilot làm lộ “**một mã định danh**”, rồi kẻ tấn công dùng mã đó ở bước sau để “**mở dữ liệu riêng của nạn nhân**”. [Phân tích kỹ thuật của nhóm phát hiện EchoLeak](https://www.catonetworks.com/blog/breaking-down-echoleak/) và [bài nghiên cứu về EchoLeak](https://arxiv.org/abs/2509.10540) mô tả cơ chế khác: prompt injection khiến Copilot đưa **chính dữ liệu nhạy cảm trong ngữ cảnh** vào tham số URL của ảnh Markdown; trình duyệt tự tải ảnh, gửi tham số đó tới máy chủ kẻ tấn công. Hai nguồn không nêu bước lấy mã định danh rồi dùng nó tải dữ liệu riêng. **Sửa đúng:** dữ liệu bị rò rỉ trực tiếp qua yêu cầu tải ảnh chứa dữ liệu trong URL, không qua một mã truy cập trung gian.
 
 ## B. Các lỗi phần mềm khác (14)
 
