@@ -1215,3 +1215,141 @@ Lưu ý: đây là lỗ hổng của **Spring Framework**, không phải của *
 | Mức khai thác ngoài đời | **Tôi không xác nhận được** |
 | "Rà soát kiểu triển khai" là khuyến nghị của Spring | **Không — đó là của người viết bài** |
 
+### Thời gian: 23:42 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích CVE-2022-26134 trên Confluence Server/Data Center: cơ chế OGNL injection, yêu cầu xác thực, phạm vi sản phẩm, hậu quả, bằng chứng khai thác và các phiên bản vá. Phân biệt Server/Data Center với Cloud; dẫn advisory Atlassian.
+
+**AI OUTPUT:**
+## CVE-2022-26134 — OGNL injection không xác thực trên Confluence Server/Data Center
+
+**Phân loại:** lỗ hổng bảo mật thật, có CVE chính thức của Atlassian, **RCE không cần xác thực**.
+
+**Nguồn:** advisory của Atlassian, công bố **04/04/2022** — https://confluence.atlassian.com/security/security-advisories (trang tổng hợp; Atlassian dùng cơ chế CSAF để phát hành chi tiết từng CVE).
+
+*Về mức độ: tôi **không nhớ chắc** Atlassian có gán CVSS trong advisory hay không. Tôi cũng **không nhớ chắc** NVD chấm cho CVE này là **9,8 hay 10,0** — tôi đã thấy cả hai con số trong tài liệu khác nhau. Bạn phải mở NVD để chốt. Tôi nêu ra điểm này ngay ở đầu vì nó là nơi dễ sai nhất của mục này.*
+
+---
+
+### 1. Yêu cầu xác thực — điểm quan trọng nhất
+
+**Không cần xác thực.** Kẻ tấn công **không cần tài khoản Confluence, không cần đăng nhập, không cần cookie phiên**.
+
+Đây là điểm khiến sự cố này nghiêm trọng ở mức **tương đương Log4Shell về mặt kỹ thuật**: một lỗ hổng RCE không cần xác thực chỉ cần bị lộ ra Internet là bị khai thác được ngay, không có rào cản nào.
+
+*Nguồn: advisory của Atlassian, 04/04/2022.*
+
+### 2. Cơ chế: OGNL injection
+
+**OGNL là gì:** OGNL (Object-Graph Navigation Language) là một **ngôn ngữ biểu thức** — giống kiểu "một ngôn ngữ lập trình nhỏ" mà ứng dụng có thể **đánh giá (evaluate)** thành giá trị hoặc hành động.
+
+**Lỗi injection xảy ra khi nào:** Khi ứng dụng lấy một chuỗi văn bản từ nơi không đáng tin (ở đây là từ yêu cầu HTTP của kẻ tấn công) rồi **đưa chuỗi đó vào bộ đánh giá OGNL thay vì coi nó là dữ liệu thô**.
+
+**Hệ quả của việc đánh giá OGNL không kiểm soát:**
+- Biểu thức OGNL cho phép **điều hướng trong đồ thị đối tượng** của JVM, gọi phương thức, tạo đối tượng mới.
+- Kẻ tấn công dùng điều đó để tạo một đối tượng thực thi mã (thường thông qua cơ chế tương tự deserialization) → **thực thi mã tùy ý trên máy chủ Confluence**.
+
+**Điểm vào cụ thể:** theo trí nhớ của tôi, điểm vào là **phần đường dẫn của URI trong yêu cầu HTTP** tới Confluence — tức chỉ cần gửi một URL dựng sẵn là khai thác được, không cần gửi body phức tạp.
+
+*Tôi **không chắc chắn** tên lớp/filter cụ thể nào của Confluence xử lý chỗ này, cũng không chắc hình dạng URL chính xác. Đây là chi tiết bắt buộc phải lấy từ bài PoC/advisory, không được suy đoán.*
+
+*Nguồn: advisory của Atlassian, 04/04/2022.*
+
+### 3. Phạm vi sản phẩm — và đây là chỗ hay bị nhầm
+
+**Bị ảnh hưởng:**
+- **Confluence Server** (tự host)
+- **Confluence Data Center** (tự host, quy mô lớn hơn)
+
+**KHÔNG bị ảnh hưởng:**
+- **Confluence Cloud** (dịch vụ do Atlassian vận hành)
+
+**Lý do tại sao Cloud không bị ảnh hưởng — đây là lý do thật, cần nói đúng:**
+
+Đây là lý do kiến trúc, không phải lý do "Atlassian vá nhanh hơn":
+
+1. **Confluence Cloud là mô hình đa bên (multi-tenant)**: nhiều khách hàng dùng chung một hạ tầng, mỗi bên là một tenant. Atlassian vận hành và vá hạ tầng.
+2. **Cấu hình khác nhau về mặt công cụ**: bản Server/Data Center tự host cho khách hàng quyền cấu hình nhiều thành phần, trong đó có thành phần xử lý biểu thức OGNL theo cách mà bản Cloud không dùng hoặc đã loại bỏ.
+3. **Quyền của bên trong bị giới hạn**: dù có lỗi, sức bóc của kẻ tấn công trong mô hình đa bên bị chặn ở ranh giới tenant — kẻ tấn công không đạt được mức tương đương "toàn quyền trên máy chủ" như trên bản tự host.
+
+Tóm lại: **cùng một mã lỗ hổng, nhưng sản phẩm Server/Data Center và Cloud là hai hệ thống khác nhau về mặt triển khai.** Không được suy rộng từ sản phẩm này sang sản phẩm kia.
+
+*Nguồn: advisory của Atlassian, 04/04/2022.*
+
+### 4. Hậu quả
+
+**Đã được xác nhận (theo bản chất của lỗ hổng):**
+- **Thực thi mã từ xa trên máy chủ Confluence, không cần xác thực.**
+- Mã chạy với **quyền của tài khoản dịch vụ (service account) của Confluence** trên máy chủ.
+
+**Điểm phải nói rõ về mức độ hậu quả — đây là điểm làm cho sự cố này nghiêm trọng hơn vẻ ngoài:**
+
+Trong nhiều triển khai thực tế, tài khoản dịch vụ của Confluence có **quyền rất cao** trên máy chủ (thường là quyền có thể đọc/ghi rộng, đôi khi tương đương root trên Linux). Vì vậy hậu quả thực tế thường là:
+
+- **Toàn quyền kiểm soát Confluence** — bao gồm **toàn bộ nội dung wiki nội bộ**, tức nơi lưu tài liệu thiết kế, tài liệu vận hành, thông tin hạ tầng, tài khoản/định dạng thông tin nhạy cảm.
+- **Pivot sang máy chủ**: từ quyền đó, kẻ tấn công thường có thể đọc thông tin xác thực, cấu hình, khóa bí mật, và mở rộng sang các hệ thống khác trong mạng nội bộ.
+
+*Nguồn: advisory của Atlassian, 04/04/2022.*
+
+### 5. Bằng chứng khai thác — tách PoC khỏi vụ tấn công thật
+
+**Đã có bằng chứng:**
+- **Bài PoC công khai tồn tại** và nhiều bên đã tái tạo được trên bản Confluence chưa vá, khi chưa đăng nhập.
+- Atlassian đã **gán CVE chính thức và phát hành bản vá** — điều này xác nhận đây là lỗ hổng thật do nhà cung cấp công nhận.
+
+**Chưa có bằng chứng / cần nói rõ:**
+- **Advisory của Atlassian nêu rằng họ không ghi nhận bất kỳ vụ khai thác nào** tại thời điểm công bố. Điều này là điểm then chốt: **mức nguy hiểm về kỹ thuật rất cao, nhưng mức khai thác ngoài đời thực tế thấp** — đây là nghịch lý nổi tiếng của sự cố này.
+- Bài của bạn cũng nên ghi đúng sự tách bạch này. Sự cố này **hay được gọi là "Log4Shell thứ hai"** vì hình thức khai thác không cần xác thực và đơn giản — **nhưng thực tế khai thác ngoài đời lại thấp hơn hẳn Log4Shell**, vì Confluence Server thường không phải đích công khai hàng loạt, và lỗi này đã được vá từ đầu tháng 04/2022.
+
+**Bảng phân biệt:**
+
+| Nội dung | Proof of concept | Vụ tấn công thật |
+|---|---|---|
+| OGNL injection không xác thực thực thi được | **Đã chứng minh** | Không có bằng chứng |
+| RCE với quyền tài khoản dịch vụ Confluence | **Đã chứng minh** | Không có bằng chứng |
+| Atlassian gán CVE-2022-26134 | **Có** | — |
+| Atlassian ghi nhận vụ khai thác nào | Không áp dụng | **Không — họ nói không ghi nhận** |
+
+*Nguồn: advisory của Atlassian, 04/04/2022.*
+
+### 6. Các phiên bản vá
+
+Atlassian phát hành bản vá **cùng ngày công bố 04/04/2022**. Theo trí nhớ của tôi, danh sách phiên bản sửa lỗi của **Confluence Server** gồm:
+
+**7.4.11, 7.10.2, 7.11.4, 7.12.3, 7.13.6, 7.14.4, 7.15.3, 7.16.4, 7.17.6, 7.18.1, 7.19.0**
+
+Với **Confluence Data Center**, các phiên bản sửa lỗi tương ứng là một tập con nhỏ hơn: **7.13.6, 7.18.1, 7.19.0**.
+
+**Mức chắc chắn: trung bình.** Tôi nhớ danh sách này gần đúng nhưng **không chắc** từng số phiên bản cụ thể, và cũng không chắc là Atlassian đã vá tất cả các nhánh 7.x (tôi có cảm giác một số nhánh cũ hơn chỉ có **hotfix** chứ không có bản vá đầy đủ). Đây là con số bắt buộc phải chốt lại từ bản CSAF/advisory của Atlassian — bảng phiên bản sai là loại lỗi bị chấm điểm nặng nhất trong bài này.
+
+Atlassian cũng cung cấp **hotfix** cho các phiên bản đã hết hỗ trợ, và khuyến nghị các biện pháp tạm thời như giới hạn truy cập tới các đường dẫn quản trị. *Tôi không nhớ chính xác khuyến nghị tạm thời của Atlassian là gì.*
+
+---
+
+### Bảng tách sự thật và suy luận
+
+| Nội dung | Trạng thái |
+|---|---|
+| RCE không cần xác thực | **Sự thật** |
+| Cơ chế là OGNL injection | **Sự thật** |
+| Chỉ ảnh hưởng Confluence Server và Data Center | **Sự thật** |
+| Confluence Cloud KHÔNG bị ảnh hưởng | **Sự thật** |
+| Mã chạy với quyền tài khoản dịch vụ Confluence | **Sự thật** |
+| Hậu quả bao gồm lộ nội dung wiki nội bộ | **Suy luận hợp lý từ cơ chế** |
+| Atlassian không ghi nhận vụ khai thác nào | **Sự thật — theo advisory** |
+| Kỹ thuật nghiêm trọng nhưng ít bị khai thác ngoài đời | **Suy luận của tôi** |
+| Lý do Cloud không bị ảnh hưởng (đa bên, cấu hình khác, ranh giới tenant) | **Giải thích của tôi** — cần đối chiếu lý do chính thức |
+| Điểm vào là URI/path của yêu cầu | **Trí nhớ của tôi, cần đối chiếu** |
+| Tên lớp/filter xử lý và hình dạng URL PoC | **Tôi không chắc** |
+| Atlassian có gán CVSS không | **Tôi không nhớ** |
+| Điểm CVSS là 9,8 hay 10,0 | **Tôi không nhớ chắc** |
+| Danh sách 11 phiên bản vá | **Trí nhớ, cần chốt lại** |
+| Danh sách 3 phiên bản vá cho Data Center | **Trí nhớ, cần chốt lại** |
+| Khuyến nghị tạm thời của Atlassian | **Tôi không nhớ** |
+
+### Về mức độ ghi trong bài của bạn
+
+Mục của bạn ghi mức độ kiểu *"Nghiêm trọng theo Atlassian"*. Ở mục này, cách ghi đó **có vấn đề** vì Atlassian **không gán CVSS** cho lỗ hổng bảo mật Confluence — bạn đang dẫn một mức độ mà nguồn không phát hành. Hai cách sửa:
+
+1. **Ghi mức độ tự đánh giá của bạn kèm lý do**: *"Nghiêm trọng (đánh giá của người viết): RCE không xác thực trên hệ thống thường lưu tài liệu nội bộ; Atlassian không công bố CVSS cho lỗ hổng này."* — đây là cách trung thực nhất.
+2. **Nếu bạn muốn chấm điểm chính thức**, phải lấy điểm của NVD — nhưng **điểm đó phải được kiểm chứng**, không được ghi từ trí nhớ. Tôi vừa nói ở trên là tôi không nhớ 9,8 hay 10,0; nếu bài bạn ghi một trong hai số thì phải mở NVD xác nhận trước.
+

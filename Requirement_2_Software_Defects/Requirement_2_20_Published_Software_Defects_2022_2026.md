@@ -78,7 +78,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng theo Atlassian**.
 - **Hậu quả:** Máy chủ tự quản có thể bị chiếm quyền, dữ liệu hoặc dịch vụ có thể bị ảnh hưởng; không suy rộng sang Confluence Cloud.
 - **Cách khắc phục:** Nâng lên nhánh đã vá, ví dụ **7.4.17, 7.13.7, 7.14.3, 7.15.2, 7.16.4, 7.17.4 hoặc 7.18.1** theo nhánh dùng; kiểm tra dấu hiệu xâm nhập.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #08 (ảo giác về tình trạng khai thác):** Trong câu trả lời của **OpenCode – Big Pickle, 23:42 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI khẳng định Atlassian “**không ghi nhận bất kỳ vụ khai thác nào**” và suy ra mức khai thác ngoài đời thấp. [Advisory gốc của Atlassian](https://confluence.atlassian.com/doc/confluence-security-advisory-2022-06-02-1130377146.html) nói rõ hãng đã biết có **khai thác đang diễn ra** đối với Confluence Server/Data Center; câu “không thấy bằng chứng khai thác” trong advisory chỉ dành cho **Atlassian Cloud**. AI đã nhầm phạm vi sản phẩm và đảo ngược kết luận của nguồn. AI cũng ghi ngày công bố **04/04/2022**, trong khi advisory hiển thị **02/06/2022**. **Sửa đúng:** lỗi RCE không cần xác thực này được công bố 02/06/2022, đã có khai thác thực tế trên Server/Data Center; Cloud không bị ảnh hưởng và không có bằng chứng khai thác Cloud trong điều tra của Atlassian.
 
 ### 09. Exchange Server PowerShell RCE — CVE-2022-41082 (2022)
 
