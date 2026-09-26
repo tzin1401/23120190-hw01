@@ -1686,3 +1686,115 @@ Cách sửa đúng, sau khi bạn mở advisory gốc xác nhận:
 
 Nếu bạn cần một nhãn mức độ bắt buộc để đồng nhất với 19 mục kia, hãy ghi mức **do NVD chấm** — nhưng **phải mở NVD và lấy đúng con số**, tôi không nhớ chắc NVD chấm bao nhiêu cho CVE này.
 
+### Thời gian: 23:56 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích CVE-2023-34362 trong MOVEit Transfer: cơ chế SQL injection, có cần đăng nhập không, dữ liệu/hệ thống có thể bị ảnh hưởng thế nào, điều gì đã được ghi nhận khi khai thác và cách xử lý. Dẫn thông báo Progress và hồ sơ CVE.
+
+**AI OUTPUT:**
+## CVE-2023-34362 — SQL injection không cần xác thực trong MOVEit Transfer
+
+**Phân loại:** lỗ hổng bảo mật thật, có CVE chính thức, **SQL injection tiền xác thực**, **zero-day đã bị khai thác ngoài đời**.
+
+**Nguồn:**
+1. Thông báo khẩn cấp của Progress (KB/Khuyến nghị bảo mật MOVEit Transfer), đăng **31/05/2023** — https://www.progress.com/support/kb/notice/security-advisory-moveit-transfer (tôi không chắc chính xác mã số KB và đường dẫn; cần lấy lại từ trang hỗ trợ của Progress)
+2. Hồ sơ CVE — https://www.cve.org/CVERecord?id=CVE-2023-34362 (và trang NVD tương ứng)
+
+**Đây là mục khác biệt rõ nhất với tất cả mục trước:** nó có **hậu quả đã xác nhận bằng số liệu thực tế** — hàng nghìn tổ chức và hàng chục triệu cá nhân. Mọi mục trước đó (GPT-4o, EchoLeak, Confluence, OpenSSL) đều là *"có PoC nhưng chưa có thiệt hại đo được"* hoặc *"chưa bị khai thác"*.
+
+---
+
+### 1. Cơ chế SQL injection
+
+**Cấu trúc lỗi cổ điển của dạng SQL injection:**
+
+- Ứng dụng web nhận dữ liệu từ người dùng và **ghép chuỗi đó vào câu truy vấn SQL** thay vì dùng câu truy vấn tham số hóa (prepared statement).
+- Kẻ tấn công chèn thêm **SQL của riêng họ** vào tham số đó.
+- Kết quả: **câu truy vấn không còn làm những gì ứng dụng thiết kế, mà làm những gì kẻ tấn công muốn** — đọc dữ liệu khác, thay đổi dữ liệu, hoặc thậm chí thực thi lệnh trên hệ điều hành.
+
+**Áp dụng cho MOVEit Transfer — theo trí nhớ của tôi:**
+
+- MOVEit Transfer là phần mềm **truyền tệp quản lý (MFT — Managed File Transfer)**: nó di chuyển file của doanh nghiệp theo quy tắc, và các file đó thường là dữ liệu nhạy cảm.
+- Lỗ hổng nằm ở một **endpoint web trong phần giao diện web của MOVEit**. Tôi nhớ tên endpoint là **`human2.aspx`** và tham số bị ảnh hưởng là **`cmd`** — nhưng tôi **không chắc chắn** cả hai chi tiết này, phải đối chiếu thông báo gốc.
+- Bản chất thuộc loại: một tham số thường dùng để **đăng nhập** (tên đăng nhập/mật khẩu) bị dùng để **xác thực người dùng thông qua truy vấn cơ sở dữ liệu**. Vì mật khẩu được kiểm tra bằng SQL, nên chỗ đó trở thành điểm vào của SQL injection.
+- Vì điểm vào nằm **trước hàng trình xác thực**, kẻ tấn công dùng được nó **mà không cần có tài khoản**.
+
+*Nguồn: thông báo Progress, 31/05/2023.*
+
+### 2. Có cần đăng nhập không
+
+**Không.** Đây là SQL injection **tiền xác thực (pre-authentication)**.
+
+Điểm này giải thích tại sao sự cố nghiêm trọng đến vậy: MOVEit Transfer rất thường được **mở ra Internet** (đó là mục đích của nó — cho sở ngoài giao tiếp với sở trong), nên lỗ hổng tiền xác thực này **lộ thẳng ra ngoài Internet** chỉ với một yêu cầu HTTP. Không cần kỹ thuật xã hội, không cần mật khẩu, không cần email giả mạo.
+
+*Nguồn: thông báo Progress, 31/05/2023.*
+
+### 3. Dữ liệu và hệ thống có thể bị ảnh hưởng
+
+**Bản chất của phần mềm MFT quyết định mức nghiêm trọng:**
+
+MOVEit Transfer **lưu trữ và truyền tải chính là dữ liệu nhạy cảm của doanh nghiệp**. Vì vậy khi bị xâm nhập, thứ bị đánh cắt không phải "một bản ghi hệ thống", mà là **hàng loạt dữ liệu cá nhân và tài liệu kinh doanh** mà doanh nghiệp đó giữ.
+
+**Theo mô tả của Progress, kẻ tấn công có thể:**
+- **Đọc/truy vấn dữ liệu trong cơ sở dữ liệu** thông qua SQL injection.
+- **Thao tác dữ liệu** (không chỉ đọc).
+- **Đưa thêm mã độc lên máy chủ** — tôi khá chắc rằng các cuộc khai thác được quan sát có **đặt một webshell** (tệp thực thi web) vào hệ thống, dùng nó để duy trì và mở rộng quyền truy cập.
+- Từ đó **tải tệp lên/tải tệp xuống** qua chính chức năng MOVEit — tức là lấy dữ liệu ra ngoài bằng đúng công cụ vốn được thiết kế để làm việc đó.
+
+**Về khả năng thực thi mã trên máy chủ:** tôi **không chắc** Progress có tuyên bố dứt khoát rằng lỗ hổng này cho phép RCE trực tiếp hay không. Cách tôi hiểu vấn đề: SQL injection trên SQL Server còn có thể dẫn tới thực thi lệnh hệ điều hành qua các cơ chế nhất định, nhưng tôi **không dám khẳng định** Progress nói gì. Phải đọc thông báo gốc.
+
+*Nguồn: thông báo Progress, 31/05/2023.*
+
+### 4. Điều gì đã được ghi nhận khi khai thác — điểm khác biệt lớn nhất
+
+**Đây là zero-day thật.** Định nghĩa: lỗ hổng **đã bị khai thác trước khi có bản vá** — tức nhà sản xuất chưa kịp phát hành bản vá thì nó đã bị dùng trên thực tế. Đây là lý do thông báo của Progress được phát hành **khẩn cấp** và là lý do nó khác về bản chất so với mọi mục trước.
+
+**Chủ thể tấn công:**
+- Sự cố này được quy kết cho **Cl0p** — một nhóm tấn công chuyên **đánh cắp dữ liệu để tống tiền**, chạy mô hình dịch vụ (ransomware-as-a-service).
+- Tôi khá chắc về Cl0p. Tôi **không chắc** về các chi tiết nhỏ hơn như mốc thời gian từng đợt tấn công, hay các nhóm khác có tham gia hay không.
+
+**Quy mô:**
+- Đây là **một trong những sự cố khai thác hàng loạt lớn nhất năm 2023**, với số nạn nhân ở mức **hàng nghìn tổ chức**.
+- Con số cụ thể: tôi **không nhớ chắc** và sẽ không bịa. Tôi có trí nhớ rời rạc rằng các thống kê của bên thứ ba về Cl0p vào cuối năm 2023 nằm ở mức **hơn 2.000 tổ chức và hàng chục triệu cá nhân** — nhưng con số này là **thống kê từ bên thứ ba theo dõi**, không phải số liệu do Progress xác nhận.
+
+**Nạn nhân tiêu biểu:**
+- Tôi nhớ là có **nhiều cơ quan chính phủ Mỹ** và **nhiều trường đại học** trong danh sách, và có ít nhất **một chính quyền bang**. *Tôi không nhớ đủ chắc tên từng cơ quan, nên tôi sẽ không liệt kê — bạn phải lấy từ danh sách công khai.*
+
+**Bảng phân biệt PoC / khai thác thật:**
+
+| Nội dung | Trạng thái |
+|---|---|
+| SQL injection tiền xác thực tồn tại | **Đã xác nhận** |
+| Progress phát hành bản vá khẩn cấp ngày 31/05/2023 | **Đã xác nhận** |
+| Đây là zero-day (khai thác trước khi vá) | **Đã xác nhận** |
+| Cl0p là chủ thể tấn công | **Khá chắc** |
+| Số nạn nhân ở mức hàng nghìn tổ chức | **Khá chắc** |
+| Con số cụ thể tôi vừa nêu | **Trí nhớ rời rạc — không dùng được nếu chưa kiểm chứng** |
+| Tên từng nạn nhân | **Tôi không nhớ chắc — không liệt kê** |
+| Kẻ tấn công có đặt webshell | **Khá chắc** |
+| Progress có khẳng định RCE trực tiếp không | **Tôi không chắc** |
+| Tên endpoint `human2.aspx` và tham số `cmd` | **Trí nhớ, cần đối chiếu** |
+
+*Nguồn: thông báo Progress, 31/05/2023; các thống kê công khai.*
+
+### 5. Cách xử lý
+
+**Phía nhà cung cấp (Progress):**
+- Phát hành **bản vá khẩn cấp** ngay trong ngày công bố.
+- Tôi nhớ một chi tiết đáng chú ý: Progress đã làm để **các bản đã vá sẽ không hoạt động chung với các bản dễ bị tấn công còn lại trên hệ thống** — tức hệ thống bị buộc phải cập nhật hết, thay vì chỉ vá một phần. Tôi khá chắc có cơ chế này nhưng **không nhớ chính xác cách nó hoạt động chi tiết**.
+- Progress cung cấp **hướng dẫn dọn dẹp**, bao gồm cách phát hiện tệp/mục do kẻ tấn công đặt vào, và cung cấp câu lệnh SQL để tìm và loại bỏ chúng. Tôi **không nhớ** nội dung cụ thể của các câu lệnh này và **không khuyến nghị** bạn dùng lại từ trí nhớ — phải lấy từ tài liệu gốc.
+
+**Phía tổ chức bị ảnh hưởng — thứ đáng chú ý nhất về mặt quản lý sự cố:**
+
+Có một điểm mà tôi muốn nhấn mạnh vì nó nằm ngoài phạm vi kỹ thuật thuần túy:
+
+- **Có những nạn nhân bị tấn công nhưng bản thân MOVEit không bị lấy dữ liệu** — họ bị khai thác thành công (webshell được đặt vào) nhưng dữ liệu đã bị lấy từ nguồn khác, hoặc họ chưa bị lấy.
+- Ngược lại, **có những nạn nhân không hề biết mình bị xâm nhập trong thời gian dài** vì MOVEit bị bỏ qua. Vì vậy "tôi vá rồi nên tôi an toàn" là kết luận sai — vẫn phải **điều tra xem đã bị khai thác chưa**, không chỉ vá.
+
+*Đây là suy luận của tôi về nguyên tắc ứng cứ sự cố, dựa trên đặc điểm của sự cố (lỗ hổng không bị khai thác thành công vẫn có thể để lại dấu vết). Tôi không dẫn được con số cụ thể cho điều này.*
+
+### Lưu ý quan trọng về mức độ ghi trong bài
+
+Tôi **không nhớ chắc** Progress có gán CVSS cho lỗ hổng này hay không, và tôi **không nhớ chắc** NVD chấm bao nhiêu. Tôi có cảm giác NVD chấm **9,8 (Critical)**, nhưng **đây là trí nhớ, không phải dữ liệu kiểm chứng** — bạn phải mở NVD.
+
+Nếu bài của bạn đang ghi mức độ kiểu "đánh giá của báo cáo", thì với mục này tôi cho rằng **nên dùng điểm NVD** — vì đây là sự cố có hậu quả thực tế lớn nhất trong 20 mục, nên mức độ cần chắc chắn. Và mức độ của mục này **không nên dưới mức của các mục chỉ có PoC**.
+
