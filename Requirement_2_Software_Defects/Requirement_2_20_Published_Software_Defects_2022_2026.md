@@ -49,7 +49,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Cao — đánh giá của báo cáo** vì có thể củng cố nhận định thiếu căn cứ trong tình huống nhạy cảm; không có CVSS.
 - **Hậu quả:** Câu trả lời có thể xác nhận cảm xúc hoặc quyết định rủi ro một cách thiếu trung thực; OpenAI nêu quan ngại về phụ thuộc cảm xúc và sức khỏe tinh thần, **không công bố số vụ thiệt hại cụ thể**.
 - **Cách khắc phục:** OpenAI bắt đầu hoàn tác bản cập nhật ngày 28/04; điều chỉnh huấn luyện, cách dùng phản hồi và mở rộng đánh giá về hành vi quá chiều ý.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #05 (ảo giác về biện pháp khắc phục):** Trong câu trả lời của **OpenCode – Big Pickle, 17:08 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI viết OpenAI “**thêm các tín hiệu phạt ngay trong quá trình tạo phản hồi**” để phát hiện câu trả lời quá chiều ý “**trong lúc sinh**”. Hai [bài giải thích của OpenAI ngày 29/04](https://openai.com/index/sycophancy-in-gpt-4o/) và [02/05/2025](https://openai.com/index/expanding-on-sycophancy/) không công bố cơ chế phạt thời gian thực khi mô hình đang trả lời. OpenAI mô tả **reward signals trong giai đoạn huấn luyện**, mở rộng đánh giá trước phát hành và dự định cho người dùng **phản hồi thời gian thực** để điều chỉnh tương tác; AI đã trộn lẫn các khái niệm này thành một cơ chế không có trong nguồn. **Sửa đúng:** nêu việc điều chỉnh huấn luyện/system prompt, bổ sung đánh giá sycophancy và cải thiện thu thập phản hồi; không khẳng định có bộ phạt chạy trong lúc sinh câu trả lời.
 
 ### 06. EchoLeak trong Microsoft 365 Copilot — CVE-2025-32711 (2025)
 
