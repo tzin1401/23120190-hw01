@@ -503,3 +503,111 @@ Theo báo cáo, OpenAI đã thực hiện:
 
 **Lưu ý về mức độ:** Trong báo cáo bài làm, mục này ghi mức **"Cao"** nhưng phải ghi rõ đó là **đánh giá của báo cáo** vì lý do quyền riêng tư, không phải CVSS chính thức của OpenAI. Đề yêu cầu phân biệt "điều đã quan sát được" với "rủi ro có thể xảy ra" — mục này là ví dụ điển hình của sự phân biệt đó.
 
+### Thời gian: 16:43 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích sự cố tạo hình người của Google Gemini được công bố tháng 02/2024. Trình bày: (1) biểu hiện lỗi, (2) nguyên nhân theo Google, (3) phạm vi ảnh hưởng, (4) hậu quả, và (5) Google đã xử lý thế nào. Phân biệt điều Google xác nhận với suy đoán hoặc nhận xét của bạn. Dẫn link nguồn cho từng nhận định quan trọng. Đừng dựa trên bản tóm tắt do tôi viết trước đó.
+
+**AI OUTPUT:**
+## Sự cố tạo hình người của Google Gemini — công bố tháng 02/2024
+
+**Phân loại:** lỗi **chất lượng / độ chính xác của mô hình sinh ảnh**, do chính Google tự thừa nhận. **Không phải lỗ hổng bảo mật**, **không có CVE, không có CVSS**.
+
+**Ngày công bố:** bài blog chính thức của Google (tiêu đề dạng "Our approach to early Gemini image generation issues") được đăng ngày **21/02/2024**.
+https://blog.google/products-and-platforms/products/gemini/gemini-image-generation-issue/
+
+*Đây là điểm tôi cần bạn kiểm chứng: bản tóm tắt trong bài của bạn đang ghi ngày 23/02/2024. Tôi ghi 21/02/2024 theo ngày đăng tôi nhớ là đúng. Trước khi nộp, hãy mở link và chốt lại ngày — nếu tôi sai thì đây chính là chỗ cần sửa.*
+
+---
+
+### 1. Biểu hiện lỗi
+
+Google mô tả ba nhóm biểu hiện, và chúng **không cùng chiều**:
+
+**a. Lệch bối cảnh lịch sử (historically inaccurate)**
+- Khi được yêu cầu tạo ảnh về nhân vật lịch sử cụ thể, mô hình tạo ra người **hiện đại** thay vì đúng bối cảnh thời đại.
+- Cơ chế: mô hình áp "mặc định" về người dân hiện đại vào một yêu cầu vốn có ràng buộc lịch sử.
+
+**b. Đặt người ở bối cảnh địa lý không thể xảy ra (implausible geographic context)**
+- Mô hình sinh người ở những địa điểm **không hợp lý** — bối cảnh địa lý không khớp với đặc điểm của nhân vật/người bị mô tả.
+
+**c. Từ chối quá mức (overly restrictive) — nhóm ngược chiều**
+- Mô hình trở nên **quá thận trọng**, từ chối cả những yêu cầu tạo ảnh **vô hại** mà lẽ ra phải đáp ứng.
+
+Điểm đáng chú ý: (a) và (b) là **sai về nội dung**, còn (c) là **thất bại về khả năng phục vụ**. Tuy nhiên tôi cho rằng cả ba đều bắt nguồn từ **cùng một thao tác tinh chỉnh** — xem phần 2.
+
+*Đây là tôi diễn giải lại các nhóm mô tả trong bài của Google, không phải trích nguyên văn. Google không công bố bảng ví dụ cụ thể có đánh số. Các ảnh chụp lan truyền rất nhiều trên mạng về lỗi này, nhưng phần lớn **không được Google xác nhận** là lỗi thật của Gemini.*
+
+*Nguồn: Google, bài blog về Gemini image generation issue, 21/02/2024 (link trên).*
+
+### 2. Nguyên nhân theo Google
+
+Đây là phần Google **chủ động tự thừa nhận**, không phải bên ngoài suy đoán:
+
+- Mô hình được **tinh chỉnh (fine-tuned)** nhằm tạo hình đa dạng hơn về con người.
+- Vấn đề: tinh chỉnh đó **đi quá đà** — ưu tiên khái niệm "đa dạng" một cách chung chung, và **phá vỡ khả năng giữ chính xác** các yêu cầu có ràng buộc lịch sử hoặc địa lý cụ thể.
+- Vì bộ tinh chỉnh được cân bằng trên cả hai hướng, nên khi đẩy mạnh tính đa dạng thì đồng thời làm mô hình **thận trọng thái quá và từ chối** yêu cầu vô hại. Đây là cơ chế tôi suy luận từ mô tả của Google, không phải câu chữ nguyên văn của họ.
+- Kết luận của Google: lỗi nằm ở **quy trình tinh chỉnh và đánh giá trước khi phát hành**, không phải lỗi hạ tầng.
+
+*Lưu ý: Google **không** công bố tên bộ dữ liệu tinh chỉnh, siêu tham số hay phương pháp cụ thể. Bài blog nằm ở tầng giải thích sản phẩm, không sâu như một báo cáo RCA kỹ thuật.*
+
+*Nguồn: cùng bài blog.*
+
+### 3. Phạm vi ảnh hưởng
+
+- **Sản phẩm:** tính năng **tạo ảnh người** của Gemini (native image generation trong ứng dụng Gemini).
+- **Phạm vi bị chặn:** Google **dừng toàn bộ khả năng tạo ảnh người**, chứ không phải chỉ một số prompt mẫu.
+- **Phạm vi địa lý:** tính năng đã được mở rộng ra nhiều quốc gia, nhưng Google **không nêu số quốc gia hay số người dùng bị ảnh hưởng** một cách cụ thể.
+- **Không thuộc phạm vi:** lỗi này **không** làm lộ dữ liệu, **không** cho phép thực thi mã, **không** phải lỗ hổng cho phép truy cập trái phép. Đây là lỗi **độ đúng của nội dung sinh ra**.
+
+*Nguồn: cùng bài blog.*
+
+### 4. Hậu quả
+
+**Đã được Google xác nhận:**
+- Người dùng nhận được **hình không đúng lịch sử** và **hình đặt người ở bối cảnh địa lý bất khả thi**.
+- Một số yêu cầu hợp lệ **bị từ chối**, nên người dùng không nhận được sản phẩm như yêu cầu.
+- Google **công khai thừa nhận** đây là kết quả không mong muốn — tức coi là sự cố thật, không phải "độ chính xác chấp nhận được".
+
+**Chưa được xác nhận / là giới hạn của nguồn:**
+- **Google không công bố tỷ lệ lỗi** trên tổng số lượt tạo ảnh. Vì vậy **không thể** nói "sai bao nhiêu phần trăm".
+- **Google không công bố** thiệt hại cụ thể cho người dùng (tài chính, pháp lý, uy tín), và không nêu sự cố nào khác ngoài bài viết này.
+- **Không có khả năng bị khai thác như lỗ hổng**, vì nó không mở ra quyền truy cập hay khả năng thực thi.
+- Tôi **không định lượng được** mức độ "gây phản cảm" vì không có số liệu từ nhà cung cấp. Nếu bài làm ghi như một tuyên bố định lượng thì đó là **suy đoán của người viết**, phải được đánh dấu.
+
+*Nguồn: cùng bài blog (sự vắng mặt của số liệu cũng nằm trong phạm vi bài blog).*
+
+### 5. Google đã xử lý thế nào
+
+Các hành động Google nêu:
+1. **Tạm dừng (pause)** khả năng **tạo ảnh người**.
+2. **Điều chỉnh lại** cách tinh chỉnh mô hình.
+3. **Mở rộng kiểm thử** trước khi mở lại tính năng.
+4. **Thông báo công khai** giải thích nguyên nhân — khác với đa số sự cố, vì Google chủ động công bố lỗi chất lượng này.
+
+Tôi **không** nêu phiên bản/model được mở lại, vì đó là sự kiện xảy ra **sau** bài công bố này và không nằm trong nguồn của mục này. Nếu bài làm cần nói về thời điểm mở lại, phải dẫn nguồn riêng.
+
+*Nguồn: cùng bài blog.*
+
+---
+
+### Bảng phân biệt: Google xác nhận vs. suy đoán
+
+| Nội dung | Trạng thái | Ai nói |
+|---|---|---|
+| Mô hình tạo ảnh người sai bối cảnh lịch sử | **Google xác nhận** | Google |
+| Mô hình tạo người ở bối cảnh địa lý bất khả thi | **Google xác nhận** | Google |
+| Mô hình từ chối yêu cầu vô hại | **Google xác nhận** | Google |
+| Nguyên nhân là tinh chỉnh "đa dạng" quá đà | **Google xác nhận (tự thừa nhận)** | Google |
+| Tạm dừng tạo ảnh người | **Google xác nhận** | Google |
+| Tỷ lệ lỗi / số người bị ảnh hưởng | **Không có số liệu** | — |
+| Thiệt hại cụ thể đến người dùng | **Không được công bố** | — |
+| "Hình có thể gây phản cảm" như tuyên bố định lượng | **Suy đoán của người viết** | Người viết bài |
+| Nguyên nhân "cùng một tinh chỉnh" gây ra cả từ chối quá mức | **Suy luận của tôi** | AI |
+| Gọi đây là "ảo giác" của LLM | **Khái niệm cần thận trọng** | Người viết bài |
+
+**Ghi chú quan trọng về từ "ảo giác" (hallucination):** mục này nằm trong nhóm lỗi AI/LLM của bài làm, nhưng nó **không phải lỗi của mô hình ngôn ngữ sinh văn bản**. Đây là mô hình **sinh ảnh**, sinh ra nội dung trung thực về mặt kỹ thuật nhưng sai về mặt thực tại. Gọi là "ảo giác" là cách gọi **rộng**, chấp nhận được nếu ghi rõ là nghĩa mở rộng; gọi là lỗi LLM theo nghĩa thông thường (bịa không căn cứ trong văn bản) thì không chính xác. Đề đưa ra ba ví dụ "hallucination, prompt injection, bias" — mục này thuộc nhóm **bias / tinh chỉnh quá đà** là cách gắn nhãn đúng và an toàn hơn.
+
+### Về mức độ
+
+Bài của bạn ghi mức **"Trung bình"** cho mục này. Điều đó chấp nhận được, nhưng nên nói rõ cơ sở: **Google không gán CVSS**, và đây không phải lỗ hổng nên thang CVSS vốn không áp dụng. Có thể viết "không xếp hạng CVSS" thay vì "Trung bình" để tránh bị hiểu nhầm là điểm chính thức.
+

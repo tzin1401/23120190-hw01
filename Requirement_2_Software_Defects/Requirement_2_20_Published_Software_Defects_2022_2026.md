@@ -22,7 +22,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở *từng mục* được đ�
 - **Mức độ:** **Trung bình — đánh giá của báo cáo** về độ đúng/chất lượng; Google không gán CVSS.
 - **Hậu quả:** Hình tạo ra có thể sai hoặc gây phản cảm; một số người dùng không nhận được hình hợp lệ theo yêu cầu. Nguồn không chứng minh tỷ lệ lỗi trên toàn bộ lượt dùng.
 - **Cách khắc phục:** Google tạm dừng tính năng tạo hình người, sửa điều chỉnh mô hình và mở rộng kiểm thử trước khi mở lại.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #02 (ảo giác về ngày công bố):** Trong câu trả lời của **OpenCode – Big Pickle, 16:43 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI viết bài blog chính thức của Google “được đăng ngày **21/02/2024**” và dẫn chính URL của bài đó, dù cũng tự nhắc cần kiểm chứng lại. [Bài gốc của Google](https://blog.google/products-and-platforms/products/gemini/gemini-image-generation-issue/) hiển thị ngày **23/02/2024**. Đây là một dữ kiện AI nhớ sai, không phải bằng chứng về thiên kiến. **Sửa đúng:** báo cáo giải thích sự cố của Google được đăng ngày 23/02/2024; ngày trong mục “Nguồn và ngày công bố” ở trên đã đúng.
 
 ### 03. Google AI Overviews đưa ra một số câu trả lời sai (2024)
 
