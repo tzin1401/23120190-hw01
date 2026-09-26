@@ -69,7 +69,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng theo Spring**.
 - **Hậu quả:** Kẻ tấn công có thể chạy mã trên máy chủ ứng dụng nếu các điều kiện khai thác được đáp ứng.
 - **Cách khắc phục:** Nâng Spring Framework lên **5.3.18** hoặc **5.2.20.RELEASE** tương ứng; rà soát kiểu triển khai thực tế.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #07 (giải thích sai điều kiện data binding):** Trong câu trả lời của **OpenCode – Big Pickle, 23:30 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI nêu controller bind dữ liệu từ request “**ví dụ qua `@RequestParam`**” như một điều kiện khai thác CVE-2022-22965. [Thông báo kỹ thuật của Spring](https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement/) xác định đường data binding liên quan tới tham số controller có **`@ModelAttribute` hoặc không gắn annotation Spring Web khác**; thông báo không liệt kê `@RequestParam` làm ví dụ cho đường khai thác này. AI đã đánh đồng việc đọc tham số request nói chung với việc bind thuộc tính của một đối tượng. **Sửa đúng:** mô tả tham số đối tượng được Spring data bind (thường qua `@ModelAttribute`), cùng các điều kiện JDK 9+, Tomcat và triển khai WAR của [advisory CVE](https://spring.io/security/cve-2022-22965/).
 
 ### 08. Confluence Server/Data Center OGNL injection — CVE-2022-26134 (2022)
 
