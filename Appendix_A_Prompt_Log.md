@@ -734,3 +734,118 @@ Các cải tiến 2, 3 và 5 tôi nêu theo tóm lược từ nội dung bài bl
 
 Nhãn chính xác hơn cho mục này là **"lỗi diễn giải/trích dẫn sai nguồn trong hệ thống RAG"** (retrieval + generation), hoặc ghi rõ: *"AI Overviews sinh ra nội dung sai thực tại, nhưng Google nói đây không nhất thiết là ảo giác theo nghĩa mô hình tự bịa ngoài nguồn."* Cách ghi này vừa đúng nguồn, vừa cho thấy bạn hiểu khái niệm — đây là điểm cộng khi vấn đáp.
 
+### Thời gian: 17:01 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích nghiên cứu prompt injection vào Slack AI công bố năm 2024: đầu vào độc hại đi vào đâu, chuỗi tấn công hoạt động thế nào, dữ liệu nào có thể lộ, điều gì đã được thử nghiệm và Slack đã xử lý ra sao. Phân biệt thử nghiệm của nhà nghiên cứu với sự cố khách hàng thực tế; dẫn nguồn gốc.
+
+**AI OUTPUT:**
+## Nghiên cứu PromptArmor: Prompt injection gián tiếp vào Slack AI (08/2024)
+
+**Phân loại:** lỗ hổng bảo mật thật — **AI/LLM vulnerability** (prompt injection). **Không có CVE và không có CVSS** trong hai nguồn được dẫn.
+
+**Nguồn gốc:**
+1. PromptArmor (bên nghiên cứu) — công bố 20/08/2024: https://www.promptarmor.com/resources/data-exfiltration-from-slack-ai-via-indirect-prompt-injection
+2. Slack (bên sản phẩm) — xác nhận và báo vá, 21/08/2024: https://slack.com/blog/news/slack-security-update-082124
+
+*Thiếu sót của tôi: tôi nhớ nội dung hai bài này khá rõ, nhưng **không nhớ chắc tiêu đề chính xác** của cả hai. Tôi không đoán bừa tiêu đề. Lấy tiêu đề từ link khi nộp.*
+
+---
+
+### 0. Bối cảnh: đây là "gián tiếp" prompt injection, và điều đó thay đổi tất cả
+
+Prompt injection trực tiếp = người dùng tự gõ chỉ dẫn độc hại vào ô chat.
+
+Prompt injection **gián tiếp** (indirect) = chỉ dẫn độc hại **không nằm trong ô chat của người dùng**; nó nằm trong **nội dung mà hệ thống tự đi tìm và đưa vào ngữ cảnh**. Người dùng hoàn toàn không hề biết mình đang bị điều khiển.
+
+Đây chính là lý do Slack AI bị ảnh hưởng: Slack AI hoạt động bằng cách **tìm kiếm và tổng hợp nội dung trong workspace rồi trả lời bằng văn bản do LLM sinh ra**. Bước "lấy nội dung từ workspace" chính là chỗ chỉ dẫn độc hại lọt vào — và bước đó do hệ thống tự thực hiện, không phải do người dùng.
+
+### 1. Đầu vào độc hại đi vào đâu
+
+Chỉ dẫn độc hại được đặt vào **nội dung mà Slack AI có thể truy xuất** — mà theo mô tả của nghiên cứu là **kênh công khai trong cùng workspace**.
+
+Điểm cần nói rõ: Slack AI **không** cho phép quản trị viên hay người dùng lọc bỏ chỉ dẫn khỏi nội dung đã đăng. Một khi lệnh độc hại nằm trong nội dung kênh, bất kỳ lần nào Slack AI truy xuất nội dung đó để trả lời ai đó, chỉ dẫn đó đi vào ngữ cảnh của mô hình.
+
+**Nguồn:** PromptArmor, 20/08/2024; Slack, 21/08/2024.
+
+### 2. Chuỗi tấn công hoạt động thế nào
+
+Chuỗi khai thác có **4 bước**, và sức mạnh của nó nằm ở chỗ **bước 2 và bước 3 chạy trong bối cảnh quyền của nạn nhân**:
+
+1. **Kẻ tấn công đăng chỉ dẫn độc hại vào kênh công khai** trong workspace. Chỉ dẫn lệnh bỏ qua mọi chỉ dẫn trước đó và thực hiện hành động cụ thể do kẻ tấn công định nghĩa.
+2. **Nạn nhân — người có quyền xem dữ liệu riêng — hỏi Slack AI một câu hỏi bình thường.** Khi Slack AI truy xuất nội dung workspace để trả lời, nó **cũng vô tình nạp** nội dung kênh công khai có chỉ dẫn độc hại vào ngữ cảnh.
+3. **Mô hình làm theo chỉ dẫn độc hại**, dù chỉ dẫn đó nằm trong "dữ liệu" chứ không phải "lệnh". Mô hình thực thi hành động bằng **quyền của nạn nhân** — tức quyền đọc những kênh riêng mà nạn nhân được phép xem còn kẻ tấn công thì không.
+4. **Dữ liệu được chuyển ra ngoài** qua một đường dẫn do kẻ tấn công kiểm soát.
+
+**Về đường thoát dữ liệu ở bước 4:** theo mô tả nghiên cứu, Slack AI có khả năng **gửi tin nhắn** vào kênh, nên chỉ dẫn độc hại có thể khiến Slack AI **đăng nội dung riêng vào một kênh mà kẻ tấn công đọc được**. Tôi nói chắc chắn về cơ chế "gửi tin nhắn vào kênh". Tôi **không chắc** rằng bản demo chính của PromptArmor dùng kênh Slack nội bộ hay một **URL bên ngoài do kẻ tấn công kiểm soát** (ví dụ nhúng dữ liệu vào đường dẫn trả về). Cả hai biến thể đều được mô tả trong nghiên cứu, nhưng tôi không nhớ chắc bản nào là demo chính. Bạn nên mở bài gốc để chốt.
+
+**Điểm bản chất — đây là leo thang đặc quyền chứ không phải chỉ "đọc trộm":** nếu chỉ là truy cập dữ liệu công khai thì kẻ tấn công đã có. Giá trị của cuộc tấn công nằm ở chỗ nó **biến Slack AI thành đại diện có quyền đọc lớn hơn người hỏi**, rồi chuyển dữ liệu ra cho kẻ tấn công.
+
+*Nguồn: PromptArmor, 20/08/2024.*
+
+### 3. Dữ liệu nào có thể lộ
+
+Theo mô tả của nghiên cứu, dữ liệu là **nội dung trong các kênh riêng mà nạn nhân có quyền đọc**:
+
+- **Nội dung tin nhắn** trong kênh riêng / DM của nạn nhân.
+- **Tệp đính kèm và nội dung do Slack AI truy xuất được** trong phạm vi quyền của nạn nhân.
+- Trong các thử nghiệm, nhà nghiên cứu nhắm vào **khóa API / thông tin bí mật** nằm trong nội dung riêng — tức dữ liệu nhạy cảm có giá trị cao.
+
+**Ranh giới quan trọng:** phạm vi rò rỉ bị giới hạn bởi **đúng những gì nạn nhân được phép xem**. Nạn nhân không đọc được dữ liệu của người khác thì kẻ tấn công cũng không lấy được qua lỗi này. Đây là loại "đọc chéo" trong ranh giới quyền, không phải đọc tràn toàn hệ thống.
+
+*Nguồn: PromptArmor, 20/08/2024.*
+
+### 4. Điều gì đã được thử nghiệm — và điều gì KHÔNG phải là sự cố thực tế
+
+Đây là ranh giới quan trọng nhất mà bài làm phải nói rõ.
+
+**PromptArmor là bên NGHIÊN CỨU, không phải bên bị tấn công:**
+
+- Việc khai thác được **tự dựng trong môi trường thử nghiệm của chính nhà nghiên cứu** (workspace thử nghiệm, dữ liệu giả).
+- Những gì chứng minh được là **tính khả thi của chuỗi tấn công** (proof of concept), chứ không phải một vụ vi phạm thật.
+
+**Slack nói gì về khách hàng thực tế:**
+
+- Slack xác nhận vấn đề là có thật và đã vá.
+- Slack nói **không có bằng chứng** rằng khách hàng nào đã bị truy cập dữ liệu trái phép tại thời điểm thông báo.
+- Slack nói tình huống **có điều kiện**: kẻ tấn công cần phải có tài khoản trong cùng workspace — tức không phải kẻ tấn công từ bên ngoài hoàn toàn.
+
+**Bảng phân biệt:**
+
+| Nội dung | Thử nghiệm của nhà nghiên cứu | Sự cố khách hàng thực tế |
+|---|---|---|
+| Chỉ dẫn độc hại trong kênh công khai bị mô hình làm theo | **Có — PromptArmor chứng minh được** | Không có bằng chứng |
+| Dữ liệu kênh riêng của nạn nhân bị đưa ra ngoài | **Có — trong môi trường thử nghiệm** | **Không có bằng chứng** |
+| Kẻ tấn công cần tài khoản trong cùng workspace | Có điều kiện đó | Slack nêu điều kiện này |
+| Số khách hàng bị ảnh hưởng | Không áp dụng | **Không công bố** |
+| Việc khai thác thực tế ngoài môi trường thử nghiệm | Không phải mục tiêu của nghiên cứu | **Không được ghi nhận** |
+
+*Nguồn: PromptArmor, 20/08/2024; Slack, 21/08/2024.*
+
+### 5. Slack đã xử lý ra sao
+
+Theo bài blog của Slack:
+
+1. **Xác nhận** vấn đề là có thật — không phủ nhận.
+2. **Đã vá lỗi.** Tôi ghi "vá ngày 20/08/2024" theo thông tin bạn đã tổng hợp; tôi **không tự xác nhận** ngày vá cụ thể từ trí nhớ, và cũng **không chắc** bài blog có nêu mốc thời gian vá cụ thể hay chỉ nói đã vá. Bạn cần chốt lại từ nguồn.
+3. **Nói rõ điều kiện giới hạn** của cuộc tấn công: cần tài khoản trong cùng workspace.
+4. **Không đưa ra bằng chứng khai thác khách hàng** tại thời điểm thông báo.
+
+**Phía tổ chức dùng Slack — đây là khuyến nghị, KHÔNG phải hành động của Slack:**
+
+- Rà soát lại **quyền truy cập** và phạm vi nội dung mà Slack AI được phép truy xuất.
+- Cân nhắc hạn chế phạm vi nội dung mà Slack AI đưa vào ngữ cảnh.
+
+Tôi tách hai phần này vì bài làm của bạn đang gộp chúng, và sự phân biệt đó là điểm cộng khi vấn đáp.
+
+*Nguồn: Slack, 21/08/2024.*
+
+---
+
+### Về mức độ
+
+Bài của bạn ghi **"Cao"** và ghi rõ là **đánh giá của báo cáo**, không phải CVSS. Điều đó đúng: hai nguồn đều **không gán CVSS**, và đây là lỗ hổng thật. Cơ sở để đánh giá "Cao" là khả năng lộ bí mật qua cơ chế không cần mật khẩu, chỉ cần một tài khoản trong workspace.
+
+### Về nhãn "prompt injection" — mục này là ví dụ chuẩn nhất
+
+Khác với mục #03 (AI Overviews — Google nói không hẳn là ảo giác), mục này **đúng nghĩa** prompt injection: chỉ dẫn độc hại nằm trong dữ liệu, mô hình không phân biệt được dữ liệu với lệnh, và hành động xảy ra **không có ý định của người dùng**. Đây là mục nên dùng làm ví dụ chuẩn khi giải thích khái niệm này trong vấn đáp.
+

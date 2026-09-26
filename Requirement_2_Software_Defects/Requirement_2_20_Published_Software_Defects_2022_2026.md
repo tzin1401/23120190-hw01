@@ -2,7 +2,7 @@
 
 **Ngày tra cứu:** 24/09/2026. **Tổng số:** 20 lỗi/sự cố riêng biệt; **6 mục liên quan trực tiếp đến AI/LLM** (#01–#06). “Hậu quả” phân biệt điều đã quan sát được với rủi ro có thể xảy ra. Mức độ ghi theo nhà cung cấp/CVSS nếu nguồn nêu rõ; các mức còn lại là **đánh giá của báo cáo**, không phải CVSS chính thức. Với sự cố chất lượng AI không có CVE, “cách khắc phục” là hành động nhà cung cấp đã công bố hoặc hướng xử lý phù hợp.
 
-Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở *từng mục* được để trống để sinh viên tự đối chiếu câu giải thích của AI, xác định **một** nhận định có thiên kiến hoặc ảo giác, và ghi bằng chứng. Không nên điền một lỗi AI chưa thực sự xuất hiện trong câu trả lời đã ghi log.
+Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được điền dần sau khi đối chiếu câu giải thích của AI với nguồn gốc. Mỗi nhận định được ghi phải thực sự xuất hiện trong câu trả lời đã lưu ở prompt log; mục chưa kiểm chứng tiếp tục để trống.
 
 ## A. Lỗi liên quan trực tiếp đến AI/LLM (6)
 
@@ -40,7 +40,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở *từng mục* được đ�
 - **Mức độ:** **Cao — đánh giá của báo cáo** vì nguy cơ tiết lộ bí mật; không có CVSS chính thức trong hai nguồn.
 - **Hậu quả:** Bản thử nghiệm cho thấy khả năng đưa khóa API từ kênh riêng vào đường dẫn do kẻ tấn công kiểm soát. Slack cho biết tình huống có điều kiện hạn chế, cần tài khoản trong cùng workspace, và **không có bằng chứng khách hàng bị truy cập dữ liệu trái phép** tại thời điểm thông báo.
 - **Cách khắc phục:** Slack triển khai bản vá ngày 20/08/2024. Về phía tổ chức, rà soát quyền truy cập và nội dung AI được phép truy xuất.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #04 (ảo giác về đường rò rỉ dữ liệu):** Trong câu trả lời của **OpenCode – Big Pickle, 17:01 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI viết “Slack AI có khả năng **gửi tin nhắn** vào kênh” và “**nói chắc chắn**” dữ liệu có thể được đăng vào kênh kẻ tấn công đọc được. [Thử nghiệm gốc của PromptArmor](https://www.promptarmor.com/resources/data-exfiltration-from-slack-ai-via-indirect-prompt-injection) mô tả đường rò rỉ khác: chỉ dẫn độc hại khiến Slack AI **hiển thị một liên kết Markdown** chứa khóa API trong tham số URL; dữ liệu được gửi tới máy chủ của kẻ tấn công **khi nạn nhân nhấp liên kết**. Nguồn này không chứng minh cơ chế Slack AI tự đăng dữ liệu vào kênh. **Sửa đúng:** mô tả liên kết độc hại và bước nhấp của nạn nhân là điều kiện trong bản thử nghiệm; [Slack](https://slack.com/blog/news/slack-security-update-082124) cho biết đã vá ngày 20/08/2024 và chưa có bằng chứng khách hàng bị truy cập dữ liệu trái phép.
 
 ### 05. GPT-4o trở nên quá chiều ý người dùng sau cập nhật (2025)
 
@@ -192,5 +192,5 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở *từng mục* được đ�
 
 - **Số mục:** 20; #01–#06 thuộc AI/LLM, vượt ngưỡng tối thiểu 5.
 - **Thời điểm công bố:** Từng mục có nguồn công khai trong khoảng 2022–2025, thuộc khoảng đề cho phép 2022–2026. Năm của CVE đôi khi khác ngày bài tư vấn được cập nhật; ngày công bố ghi theo nguồn đầu tiên nêu trong mục.
-- **Trường bắt buộc:** Mỗi mục có nguồn, mô tả, mức độ, hậu quả, cách khắc phục và **một ô trống** cho nhận diện lỗi trong lời giải thích của AI.
+- **Trường bắt buộc:** Mỗi mục có nguồn, mô tả, mức độ, hậu quả, cách khắc phục và một trường nhận diện lỗi trong lời giải thích của AI; trường chưa kiểm chứng vẫn để trống.
 - **Việc sinh viên tự thực hiện:** Đọc lại lời giải thích AI đã lưu trong [Appendix A](../Appendix_A_Prompt_Log.md), trích một nhận định AI sai/thiên lệch **thực sự có** cho từng mục và đối chiếu với nguồn. Nếu một mục không có sai sót quan sát được, cần hỏi AI bổ sung và lưu câu trả lời thật trước khi kết luận; không tự tạo “ảo giác” làm bằng chứng.
