@@ -87,7 +87,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Cao — đánh giá của báo cáo** cho lỗi RCE trong điều kiện cần quyền xác thực; nguồn trên không nêu CVSS.
 - **Hậu quả:** Kẻ tấn công đã xác thực có thể chạy mã trên Exchange Server tại chỗ; Microsoft ghi nhận các cuộc tấn công có mục tiêu ở phạm vi hạn chế. Exchange Online không cần xử lý theo thông báo này.
 - **Cách khắc phục:** Cài bản cập nhật bảo mật Exchange Server cho CVE-2022-41082 do Microsoft phát hành 08/11/2022; rà soát dấu hiệu tấn công.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #09 (ảo giác về điều kiện xác thực):** Trong câu trả lời của **OpenCode – Big Pickle, 23:49 26/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI gọi CVE-2022-41040 là “**Vượt xác thực**” và nói kẻ tấn công có thể bắt đầu chuỗi khai thác khi “**không cần thông tin đăng nhập nào**”. [Thông báo MSRC của Microsoft](https://www.microsoft.com/en-us/msrc/blog/2022/09/customer-guidance-for-reported-zero-day-vulnerabilities-in-microsoft-exchange-server) xác định CVE-2022-41040 là lỗi **SSRF**, CVE-2022-41082 là lỗi **RCE**, và nêu rõ phải có quyền truy cập **đã xác thực** vào Exchange Server để khai thác thành công **bất kỳ lỗi nào trong hai lỗi**. AI đã mô tả sai 41040 thành lỗi vượt xác thực, làm sai điều kiện khai thác của cả chuỗi. **Sửa đúng:** kẻ tấn công đã xác thực có thể dùng 41040 để kích hoạt 41082 từ xa. Microsoft phát hành bản cập nhật bảo mật cho cả hai vào **08/11/2022**, không phải 11/10/2022 như AI ghi.
 
 ### 10. Tràn bộ đệm OpenSSL khi kiểm tra chứng chỉ — CVE-2022-3602 (2022)
 
