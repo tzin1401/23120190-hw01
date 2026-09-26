@@ -141,7 +141,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng, CVSS 10,0 theo Cisco** cho CVE-2023-20198.
 - **Hậu quả:** Thiết bị mạng có thể xuất hiện tài khoản quản trị trái phép; nếu có thêm điều kiện/lỗi thứ hai, kẻ tấn công có thể kiểm soát sâu hơn.
 - **Cách khắc phục:** Nâng IOS XE lên bản sửa đúng nhánh; tắt Web UI nếu không cần hoặc giới hạn nguồn được truy cập, kiểm tra tài khoản lạ.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #15 (đảo ngược vai trò hai CVE):** Trong câu trả lời của **OpenCode – Big Pickle, 00:20 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI viết **CVE-2023-20198 cần đăng nhập** còn **CVE-2023-20273 không cần đăng nhập và tự tạo được tài khoản quyền 15**. [Advisory của Cisco](https://www.cisco.com/c/en/us/support/docs/csa/cisco-sa-iosxe-webui-privesc-j22SaA4z.html) mô tả trình tự ngược lại: kẻ tấn công **trước tiên dùng CVE-2023-20198** để truy cập ban đầu và tạo tài khoản cục bộ bằng lệnh quyền 15; **sau đó dùng tài khoản mới cùng CVE-2023-20273** để nâng quyền lên root và ghi implant. Cisco chấm **10,0** cho 20198 và **7,2** cho 20273, cũng khác bảng AI ghi cả hai đều 10,0. AI đã gán năng lực của lỗi thứ nhất cho lỗi thứ hai, làm sai điều kiện xác thực và chuỗi khai thác. **Sửa đúng:** 20198 là bước tạo tài khoản đặc quyền không cần xác thực; 20273 là bước tiếp theo để đạt quyền root/cài implant trong chiến dịch được Cisco ghi nhận.
 
 ### 16. Mã độc cài trong gói xz Utils/liblzma — CVE-2024-3094 (2024)
 
