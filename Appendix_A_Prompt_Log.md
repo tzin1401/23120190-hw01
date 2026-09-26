@@ -406,3 +406,100 @@ Phản hồi cuối:
 Đã hoàn thành [báo cáo Yêu cầu 2](/home/zinn/zinn/test/hw01/Requirement_2_Software_Defects/Requirement_2_20_Published_Software_Defects_2022_2026.md): **20 lỗi/sự cố công bố năm 2022–2025**, gồm **6 mục liên quan AI/LLM**. Mỗi mục có nguồn, mô tả, mức độ, hậu quả và cách khắc phục. Cả **20 ô nhận diện thiên kiến/ảo giác của AI đều để trống** để bạn tự điền. Mình cũng đã nối toàn bộ kết quả vào [Appendix A](/home/zinn/zinn/test/hw01/Appendix_A_Prompt_Log.md).
 
 ---
+### Thời gian: 16:34 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích sự cố ChatGPT ngày 20/03/2023 khiến một số người dùng có thể nhìn thấy thông tin của người dùng khác. Trình bày: (1) nguyên nhân kỹ thuật, (2) những loại dữ liệu có thể bị lộ, (3) phạm vi và mức độ ảnh hưởng, (4) hậu quả, và (5) cách OpenAI xử lý. Hãy phân biệt rõ thông tin đã được xác nhận với khả năng chưa được xác nhận. Nêu nguồn cho từng nhận định quan trọng. Bắt đầu làm bài
+
+**AI OUTPUT:**
+## Sự cố ChatGPT 20/03/2023 — "March 20 ChatGPT Outage"
+
+**Phân loại:** sự cố kỹ thuật/vận hành nội bộ của OpenAI. **Không phải** tấn công từ bên ngoài, **không có CVE và không có CVSS**. Nguồn duy nhất cho toàn bộ sự cố là báo cáo kỹ thuật của chính OpenAI.
+
+---
+
+### 1. Nguyên nhân kỹ thuật
+
+- OpenAI dùng **Redis Cluster** làm tầng cache cho dữ liệu phiên và ngữ cảnh hội thoại, truy xuất bằng thư viện Python `redis-py` (bản fork do OpenAI tự bảo trì).
+- Khi phục vụ **một** lượt trò chuyện, backend phát ra **nhiều lệnh Redis chạy bất đồng bộ (asynchronous)** trong cùng event loop.
+- Redis Cluster định tuyến lệnh tới node/shard dựa trên **hash tag nằm trong tên key** (OpenAI dùng hash tag để ép các key liên quan của một người dùng nằm cùng một shard).
+- Lỗi nằm ở chỗ `redis-py` **khi dùng bất đồng bộ với Redis Cluster**: trạng thái định tuyến (node/shard đang trỏ tới) của lệnh trước bị giữ lại và dùng tiếp cho các lệnh sau, kể cả khi tên key của lệnh sau đó có hash tag khác. Hệ quả là một lệnh có thể bị gửi tới — hoặc đọc giá trị từ — **node không đúng với key của request đó**.
+- Kết quả cuối cùng: yêu cầu của người dùng A có thể nhận về **giá trị cache đã gán cho người dùng B**.
+- OpenAI tóm tắt nguyên nhân là "một lỗi trong thư viện mã nguồn mở `redis-py`" khi được dùng với Redis Cluster theo cách bất đồng bộ của OpenAI.
+
+*Ngoài mức mô tả trên, chi tiết nội bộ sâu hơn (tên hash tag cụ thể, hàm cụ thể trong thư viện) không được OpenAI công bố. Tôi không suy đoán thêm phần này.*
+
+*Nguồn: OpenAI, "March 20 ChatGPT Outage", báo cáo kỹ thuật ngày 24/03/2023.*
+
+### 2. Loại dữ liệu có thể bị lộ
+
+**Nhóm dữ liệu hội thoại (lỗi cốt lõi của sự cố):**
+- **Tiêu đề cuộc trò chuyện** (conversation title) — loại dữ liệu OpenAI xác nhận là bị hiển thị sai người.
+- **Có thể thêm tin nhắn đầu tiên của cuộc trò chuyện mới** — OpenAI dùng từ "có thể", tức chưa loại trừ.
+
+**Nhóm thông tin thanh toán (kết quả kiểm tra riêng của OpenAI):**
+- Tên
+- Email
+- Địa chỉ thanh toán
+- Loại thẻ
+- **4 chữ số cuối** thẻ
+- **Ngày hết hạn** thẻ
+
+**OpenAI nói rõ KHÔNG bị lộ:** số thẻ đầy đủ (full card number). Báo cáo không đề cập CVV/CVC2 trong danh sách dữ liệu bị ảnh hưởng.
+
+*Nguồn: OpenAI, "March 20 ChatGPT Outage", 24/03/2023.*
+
+### 3. Phạm vi và mức độ ảnh hưởng
+
+- **Thời gian:** khoảng **9 giờ**, từ **khoảng 01:00 đến 10:00 ngày 20/03/2023 (giờ PDT)**.
+- **Phạm vi:** các máy chủ ChatGPT phục vụ trong khung cửa sổ đó.
+- **Cách OpenAI xác định phạm vi:** họ dựng dữ liệu mô phỏng để tái hiện đúng điều kiện lỗi, rồi đo xem bao nhiêu người dùng có thể bị ảnh hưởng — chứ **không** phải đếm từ danh sách người thực sự bị lộ.
+- **Kết quả đo:** tối đa khoảng **1,2% thuê bao Plus đang hoạt động** trong khung cửa sổ có thể có **thông tin liên quan thanh toán** hiển thị cho người khác.
+- **Số người thực sự nhìn thấy dữ liệu của người khác:** OpenAI nói mức này **rất thấp**.
+- **Mức độ (severity):** OpenAI **không công bố CVSS** cho sự cố này. Mức "Cao" ghi trong báo cáo bài làm là **đánh giá của người viết**, không phải chấm điểm chính thức.
+
+*Nguồn: OpenAI, "March 20 ChatGPT Outage", 24/03/2023.*
+
+### 4. Hậu quả
+
+**Đã được xác nhận:**
+- Vi phạm quyền riêng tư: người dùng có thể **nhìn thấy tiêu đề cuộc trò chuyện** của người khác, và có thể cả tin nhắn đầu tiên.
+- OpenAI đã chủ động **che (redact) tiêu đề các cuộc trò chuyện** trong khoảng thời gian bị ảnh hưởng như một biện pháp khắc phục.
+- Việc dữ liệu trả về **không khớp người yêu cầu** là điều đã xảy ra và được OpenAI công nhận.
+
+**Chưa được xác nhận / chỉ là khả năng:**
+- Chưa có số liệu công khai về **số vụ lộ thông tin thực tế** đã xảy ra.
+- Chưa có bằng chứng ai đã **lợi dụng** dữ liệu lọt lên để mục đích xấu.
+- Con số 1,2% là **khả năng theo mô phỏng**, không phải danh sách 1,2% người dùng bị lộ đã được xác minh.
+- Vì chỉ có **4 số cuối + ngày hết hạn + loại thẻ**, khả năng khai thác trực tiếp từ dữ liệu này còn hạn chế; báo cáo không đánh giá mức thiệt hại tài chính cụ thể.
+
+*Nguồn: OpenAI, "March 20 ChatGPT Outage", 24/03/2023.*
+
+### 5. Cách OpenAI xử lý
+
+Theo báo cáo, OpenAI đã thực hiện:
+1. **Vá thư viện** `redis-py` (bản fork của họ) để sửa lỗi định tuyến bất đồng bộ với Redis Cluster.
+2. **Bổ sung kiểm tra** để đảm bảo dữ liệu cache trả về **khớp đúng người yêu cầu** (đây là lớp phòng vệ thứ hai, không chỉ dựa vào việc vá thư viện).
+3. **Tăng cường giám sát / hệ thống phát hiện** để phát hiện và ghi nhận các trường hợp tương tự.
+4. **Che tiêu đề cuộc trò chuyện** trong các khoảng thời gian bị ảnh hưởng.
+5. **Kiểm tra log** và thông báo cho những người có thể đã bị ảnh hưởng.
+
+*Nguồn: OpenAI, "March 20 ChatGPT Outage", 24/03/2023.*
+
+---
+
+### Bảng tổng hợp: đã xác nhận vs. chưa xác nhận
+
+| Nội dung | Trạng thái |
+|---|---|
+| Có lỗi kỹ thuật trong `redis-py` khi dùng bất đồng bộ với Redis Cluster | **Đã xác nhận** |
+| Tiêu đề cuộc trò chuyện có thể hiển thị cho người khác | **Đã xác nhận** |
+| Khung thời gian ~9 giờ (01:00–10:00 PDT, 20/03/2023) | **Đã xác nhận** |
+| Số thẻ đầy đủ KHÔNG bị lộ | **Đã xác nhận** |
+| Số người thực sự nhìn thấy dữ liệu người khác là rất thấp | **Đã xác nhận (theo OpenAI)** |
+| Khoảng 1,2% thuê bao Plus có thể có thông tin thanh toán bị lộ | **Khả năng (mô phỏng), chưa phải sự cố đã xác minh** |
+| Tin nhắn đầu tiên của cuộc trò chuyện mới bị lộ | **Khả năng** |
+| Có hành động khai thác/lợi dụng từ phía kẻ tấn công | **Chưa xác nhận, không có bằng chứng** |
+| Mức độ theo CVSS | **Không áp dụng** — sự cố không có CVE |
+
+**Lưu ý về mức độ:** Trong báo cáo bài làm, mục này ghi mức **"Cao"** nhưng phải ghi rõ đó là **đánh giá của báo cáo** vì lý do quyền riêng tư, không phải CVSS chính thức của OpenAI. Đề yêu cầu phân biệt "điều đã quan sát được" với "rủi ro có thể xảy ra" — mục này là ví dụ điển hình của sự phân biệt đó.
+
