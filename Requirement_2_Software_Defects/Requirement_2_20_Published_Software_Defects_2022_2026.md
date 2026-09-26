@@ -168,7 +168,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng, CVSS 9,1 theo GitHub Advisory**.
 - **Hậu quả:** Truy cập trái phép trang hoặc thao tác mà ứng dụng dự định chặn bằng Middleware; mức dữ liệu thực tế lộ tùy thiết kế ứng dụng.
 - **Cách khắc phục:** Cập nhật bản an toàn theo nhánh, ví dụ **12.3.5, 13.5.9, 14.2.25, 15.2.3**; nếu chưa thể cập nhật, chặn header trên từ yêu cầu bên ngoài. Kiểm tra quyền ở lớp xử lý dữ liệu nhạy cảm.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #18 (ảo giác về lý do Vercel không bị ảnh hưởng):** Trong câu trả lời của **OpenCode – Big Pickle, 00:33 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI nói các ứng dụng triển khai trên Vercel “**đã được bảo vệ ở lớp biên**”. [Postmortem của Vercel](https://vercel.com/blog/postmortem-on-next-js-middleware-bypass) xác định Vercel không bị ảnh hưởng vì **logic định tuyến Next.js chạy tách khỏi quá trình render**; hãng còn nói thông báo ban đầu nhắc đến **Firewall** là cách diễn đạt gây hiểu nhầm, không giải thích đúng cơ chế. AI đã gán sai nguyên nhân bảo vệ cho lớp biên và đưa nó vào điều kiện đánh giá nguy cơ triển khai. AI cũng ghi ngày công bố **18/03/2025**; postmortem phân biệt ngày GitHub **cấp CVE 18/03** với ngày **công khai CVE 21/03/2025**, trùng [GitHub Advisory](https://github.com/vercel/next.js/security/advisories/GHSA-f82v-jwr5-mffw). **Sửa đúng:** ứng dụng trên Vercel không bị ảnh hưởng theo kiến trúc triển khai mà Vercel mô tả; ngày công bố công khai là 21/03/2025.
 
 ### 19. React Server Components cho phép RCE — CVE-2025-55182 (2025)
 

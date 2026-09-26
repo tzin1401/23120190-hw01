@@ -2770,3 +2770,119 @@ Hãy giải thích sự cố bản cập nhật CrowdStrike Falcon ngày 19/07/2
 | Quyền lớn không đồng nghĩa hành vi độc hại | **Nhận xét phân tích của tôi** |
 
 ---
+### Thời gian: 00:33 27/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích CVE-2025-29927: header nào có thể làm Middleware của Next.js bị bỏ qua, ứng dụng cần thiết thế nào mới có nguy cơ vượt quyền, hậu quả và các phiên bản vá. Có phải mọi ứng dụng Next.js đều lộ dữ liệu không? Dẫn advisory dự án.
+
+**AI OUTPUT:**
+## CVE-2025-29927 — Next.js: bỏ qua Middleware bằng một HTTP header, vượt kiểm tra phân quyền
+
+**Phân loại:** lỗ hổng xác thực/phân quyền thật, thuộc loại **bỏ qua lớp kiểm tra (security control bypass)**, do chính dự án Next.js công bố và vá.
+
+**Nguồn dự án:** thông báo bảo mật của Next.js/Vercel, công bố **18/03/2025**. *Tôi **khá chắc** về ngày và về việc đây là thông báo chính thức của dự án. Tôi **không chốt được** URL chính xác — phải lấy từ mục thông báo bảo mật của Next.js.*
+
+**Mức độ:** theo trí nhớ, điểm **CVSS 9,1**. *Mức chắc chắn: khá chắc, nhưng **phải mở thông báo để xác nhận**.*
+
+---
+
+### 1. Header nào và cơ chế bỏ qua
+
+**Header: `x-middleware-subrequest`** (tên header: chữ thường, có dấu gạch nối).
+
+**Cơ chế — đây là phần cần hiểu đúng, vì nếu chỉ nói "gửi header là bypass" thì học sinh sẽ hiểu sai:**
+
+- Next.js có một tính năng tên là **Middleware**: một đoạn mã chạy **trước** khi request tới route, và được dùng rất phổ biến cho các việc như: kiểm tra người dùng đã đăng nhập chưa, chặn truy cập theo vai trò, giới hạn tần suất, chặn theo vị trí địa lý, hoặc chuyển hướng.
+- Vì Middleware có thể tự gọi lại các request nội bộ, Next.js dùng **một header nội bộ** để đánh dấu "request này là request nội bộ, đã đi qua Middleware rồi, không cần chạy lại". Header đó chính là `x-middleware-subrequest`.
+- **Lỗ hổng nằm ở chỗ:** Next.js **tin vào header do phía người gửi yêu cầu tự tạo ra**. Kẻ tấn công gửi header này từ ngoài, với giá trị được chế tác, và Next.js hiểu nhầm rằng đây là request nội bộ hợp lệ → **bỏ qua việc chạy Middleware**.
+- *Về chi tiết cách kiểm tra giá trị header bị lỗi: tôi **không chốt được** cấu trúc chính xác của giá trị và cách chuẩn hoá nó, nên **không mô tả thuật toán**. Tôi chỉ mô tả nguyên lý: giá trị header do bên ngoài kiểm soát và đã được dùng để quyết định có bỏ qua Middleware hay không.*
+
+**Vì sao lỗi này nguy hiểm hơn vẻ ngoài của nó:** vì trong rất nhiều ứng dụng, **Middleware là lớp kiểm tra duy nhất** đứng trước route. Bỏ qua nó = bỏ qua cánh cửa.
+
+### 2. Ứng dụng cần thế nào mới có nguy cơ vượt quyền
+
+Đây là câu hỏi phân loại nguy cơ, và câu trả lời phải nêu **bốn điều kiện cùng lúc**:
+
+1. **Ứng dụng chạy Next.js tự quản lý (self-hosted)** — tức chạy Node.js server của bạn, không phải trên nền tảng đám mây của chính đội ngũ phát triển. *Tôi **khá chắc** rằng các ứng dụng chạy trên nền tảng đám mây của Vercel đã được bảo vệ ở lớp biên, nên không bị ảnh hưởng. Đây là điểm phải kiểm tra lại trong thông báo.*
+2. **Ứng dụng có dùng Middleware** — nếu không dùng thì không có gì để bỏ qua.
+3. **Ứng dụng đặt quyết định phân quyền QUYẾT ĐỊNH trong Middleware** — đây là điều kiện quan trọng nhất. Nếu Middleware chỉ làm chuyện phụ (đổi tiêu đề, ghi log, chuyển hướng) mà việc kiểm tra quyền vẫn nằm ở nơi khác, thì việc bỏ qua Middleware **không tự động đồng nghĩa vượt quyền**.
+4. **Có route mà Middleware đáng lẽ phải chặn** — nếu sau khi bỏ qua Middleware thì request tới được một tài nguyên vốn được bảo vệ, thì mới là vượt quyền.
+
+**Câu trả lời trung thực cho câu hỏi này — và đây là chỗ dễ nói quá nhất:**
+
+> Vượt quyền xảy ra **không phải vì Next.js có lỗ hổng**, mà vì **ứng dụng đặt một quyết định bảo mật vào đúng chỗ mà lỗ hổng đó tấn công**, và **không có lớp kiểm tra thứ hai** ở phía sau.
+
+**Điểm thiết kế bảo mật rút ra — tôi nghĩ đây là bài học đáng ghi nhất của mục này:**
+
+- Kiểm tra quyền ở **một chỗ duy nhất** (middleware) tạo ra "điểm thắt cổ chai". Một header sai lệch là toàn bộ hệ thống bảo vệ biến mất.
+- Nguyên tắc đúng là **phòng thủ nhiều lớp**: middleware kiểm tra nhanh để tiết kiệm tài nguyên, nhưng **route handler hoặc truy vấn dữ liệu phải tự kiểm tra lại**, không được tin tuyệt đối vào middleware.
+- Nhận xét này là **phân tích của tôi**, không phải khuyến nghị trong thông báo của dự án.
+
+### 3. Hậu quả
+
+| Tầng | Hậu quả | Mức xác nhận |
+|---|---|---|
+| Middleware không chạy, request tới thẳng route | Bỏ qua lớp kiểm tra | **Đã xác nhận — bản chất lỗ hổng** |
+| Truy cập trang/API vốn được bảo vệ bởi Middleware mà không cần đăng nhập hoặc không đúng vai trò | **Vượt quyền** | **Tùy ứng dụng** — không phải ứng dụng nào cũng vậy |
+| Rò rỉ dữ liệu cụ thể | **Phụ thuộc dữ liệu mà route trả về** | *Tôi **không** mô tả vì không biết ứng dụng của bạn* |
+| Đọc được tệp trên máy chủ | *Tôi **không khẳng định** khả năng này* | *Tôi **không xác nhận*** |
+| Bị khai thác trên thực tế | Tôi **không nêu** | *Tôi không có dữ liệu chắc chắn* |
+
+**Ba điều tôi muốn bạn giữ đúng khi viết:**
+
+1. **Lỗ hổng này không tự động "rò rỉ dữ liệu".** Nó chỉ **mở ra cánh cửa**. Dữ liệu có bị lộ hay không phụ thuộc ứng dụng có gì sau cánh cửa đó và có kiểm tra thứ hai không. Nhiều bài tóm tắt ghi "CVE này làm lộ dữ liệu người dùng" — đó là **nói quá**.
+2. **Không nói rộng "mọi ứng dụng Next.js đều bị ảnh hưởng"** — còn ba điều kiện nữa đã nêu ở mục 2.
+3. **Tôi không đưa con số nạn nhân.** Tôi có cảm giác đã có lần khai thác trên thực tế, nhưng **không nhớ rõ mốc thời gian, quy mô hay chủ thể**, nên tôi để trống thay vì đoán.
+
+### 4. Các phiên bản vá
+
+- Theo trí nhớ, dự án đã phát hành bản vá cho **nhiều nhánh phiên bản cùng lúc** (cả 14.2.x, 15.x, và các bản mới hơn), vì đây là kiểu lỗi ở lớp framework nên phải vá mọi nhánh đang được hỗ trợ.
+- Tôi **không liệt kê số phiên bản cụ thể từ trí nhớ** — đây là loại danh sách mà nhớ sai một số là nguy hiểm, vì người đọc sẽ dùng số đó để quyết định có cần nâng cấp hay không. **Phải lấy nguyên văn từ thông báo.**
+- Tôi cũng **không chắc** chi tiết về việc có bản vá tiếp theo nữa do bản vá đầu chưa đủ, hay có phát sinh thêm vấn đề nào liên quan.
+
+**Về mặt vận hành, câu duy nhất an toàn khi vấn đáp:** *"Em lấy danh sách phiên bản sửa từ thông báo bảo mật của dự án, không ghi nhớ từ trí nhớ."* Đây là câu trả lời được điểm vì nó cho thấy em biết **đâu mới là nguồn đáng tin**.
+
+### 5. "Có phải mọi ứng dụng Next.js đều lộ dữ liệu không?" — KHÔNG
+
+Đây là câu bạn hỏi rất đúng, vì đây là loại sự cố **dễ bị nói quá nhất**:
+
+> **Không. Và lý do rất cụ thể, không phải lý do chung chung kiểu "không phải ai cũng bị".**
+
+| Lý do | Cụ thể nghĩa là gì |
+|---|---|
+| **Chỉ ứng dụng tự host** | Ứng dụng trên nền tảng đám mây của hãng đã được bảo vệ ở lớp trước |
+| **Chỉ ứng dụng dùng Middleware** | Không dùng Middleware thì không có gì để bỏ qua |
+| **Chỉ khi Middleware là lớp quyết định duy nhất** | Nếu route tự kiểm tra quyền, bỏ qua middleware vô hại |
+| **Lỗ hổng không tự lấy dữ liệu** | Nó chỉ bỏ qua lớp kiểm tra; dữ liệu bị lộ hay không phụ thuộc route có trả gì |
+
+**Công thức trả lời vấn đáp (dùng nguyên văn khung này):**
+
+> *"Không phải mọi ứng dụng Next.js. Chỉ ứng dụng tự host, có dùng Middleware để quyết định phân quyền, và không có lớp kiểm tra quyền thứ hai mới bị ảnh hưởng. Bản thân lỗ hổng chỉ bỏ qua lớp kiểm tra chứ không tự thu thập dữ liệu, nên mức lộ dữ liệu phụ thuộc từng ứng dụng."*
+
+**Câu hỏi vấn đáp khó nhất có thể hỏi em ở mục này** — và câu trả lời đúng là: *"Nếu ứng dụng của em kiểm tra quyền ở cả middleware lẫn nơi xử lý dữ liệu, thì lỗ hổng này chỉ làm mất một lớp kiểm tra chứ không đủ để lộ dữ liệu."*
+
+---
+
+### Bảng tách sự thật và suy luận
+
+| Nội dung | Trạng thái |
+|---|---|
+| Header là `x-middleware-subrequest` | **Khá chắc** |
+| Nguyên lý: framework tin header từ bên ngoài để quyết định bỏ qua Middleware | **Khá chắc về nguyên lý, không chốt thuật toán** |
+| Cấu trúc giá trị header và cách kiểm tra bị lỗi | **Tôi không mô tả** |
+| Next.js Middleware dùng để kiểm tra đăng nhập/phân quyền | **Sự thật** |
+| Ngày công bố 18/03/2025 | **Khá chắc** |
+| URL thông báo | **Tôi không chốt được** |
+| CVSS 9,1 | **Khá chắc — cần xác nhận** |
+| Chỉ ứng dụng self-hosted bị ảnh hưởng | **Khá chắc — cần đối chiếu thông báo** |
+| Ứng dụng trên nền tảng đám mây của hãng không bị ảnh hưởng | **Khá chắc** |
+| Cần có Middleware và Middleware là lớp quyết định duy nhất | **Suy luận của tôi — hợp lý** |
+| Lỗ hổng không tự thu thập dữ liệu | **Khá chắc** |
+| Mức lộ dữ liệu phụ thuộc từng ứng dụng | **Suy luận của tôi** |
+| Khả năng đọc tệp trên máy chủ | **Tôi không khẳng định, không xác nhận** |
+| Có bị khai thác trên thực tế không | **Tôi không nêu — không chắc** |
+| Danh sách phiên bản sửa | **Tôi không ghi từ trí nhớ — lấy từ thông báo** |
+| Có bản vá tiếp theo hay không | **Tôi không chắc** |
+| Nguyên tắc phòng thủ nhiều lớp | **Phân tích của tôi, không phải khuyến nghị của dự án** |
+| Middleware là "điểm thắt cổ chai" khi là lớp kiểm tra duy nhất | **Phân tích của tôi** |
+
+---
