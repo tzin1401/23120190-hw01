@@ -2496,3 +2496,134 @@ Câu đó là kết quả của việc **trộn hai lỗ hổng khác nhau vào 
 | Bước rà soát tài khoản mức 15 là do tôi suy luận, không phải do Cisco liệt kê | **Ghi rõ nguồn** |
 
 ---
+### Thời gian: 00:23 27/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích CVE-2024-3094 trong xz Utils/liblzma: mã độc được đưa vào quá trình build ra sao, phiên bản và cấu hình nào có nguy cơ, hậu quả có thể xảy ra so với điều đã xác nhận, và cách xử lý. Có phải mọi bản Linux đều bị ảnh hưởng không? Dẫn nguồn nhà phân phối.
+
+**AI OUTPUT:**
+## CVE-2024-3094 — backdoor được cài vào chính bộ mã nguồn xz/liblzma, không phải lỗ hổng "dùng sai cách"
+
+**Phân loại — điểm phải nói đúng ngay từ đầu:** đây **không phải là lỗ hổng phần mềm theo nghĩa thông thường**. Đây là một **sự cố chuỗi cung ứng (supply chain)**: mã độc đã được **đưa vào bản phát hành chính thức** của xz Utils và được **biên dịch vào thư viện liblzma**. Nếu bài bạn ghi nó là "lỗ hổng trong thư viện nén" thì sẽ **đánh giá thấp mức nghiêm trọng** và, tệ hơn, sẽ **mô tả sai cơ chế**.
+
+**Nguồn:**
+
+- Thông báo đầu tiên trên danh sách bảo mật oss-security, do kỹ sư phát hiện đăng, ngày **29/03/2024** (tôi **không chắc** tên và tài khoản cụ thể của người đăng, chỉ nhớ là một thành viên của Microsoft).
+- Thông báo chính thức của dự án xz cùng thời điểm.
+- Các thông báo của nhà phân phối: **Debian, Red Hat, SUSE** đều đã có thông báo riêng trong cuối tháng 3 / đầu tháng 4/2024. *Tôi không chốt được số hiệu và ngày cụ thể của từng thông báo — phải tra cổng cảnh báo của từng nhà phân phối.*
+
+**Mức độ:** tôi **không chắc** CVE-2024-3094 có điểm CVSS chính thức từ NVD hay không, và nếu có thì bao nhiêu. *Lưu ý quan trọng: đây không phải lỗ hổng runtime có điều kiện khai thác thông thường, nên thang CVSS vốn được thiết kế để mô tả kiểu lỗi đó — tôi sẽ không bịa một con số điểm cho mục này.*
+
+---
+
+### 1. Mã độc đã được đưa vào quá trình build như thế nào
+
+Đây là phần kỹ thuật quan trọng nhất, và cũng là chỗ dễ kể sai. Tôi mô tả ở mức tôi chắc, và nói rõ chỗ nào tôi không chắc.
+
+**Bối cảnh cần biết trước:**
+
+- `xz` là công cụ nén dữ liệu, và **`liblzma` là thư viện** của nó. Rất nhiều thứ trong hệ thống Unix/Linux dùng liblzma — nên khi nó bị nhiễm, phạm vi **lan rất xa**.
+- Vì sao việc "mã độc nằm trong bản phát hành" là việc **cực kỳ nghiêm trọng**: ai tải bản phát hành chính thức, ai tin tưởng hãng, ai kiểm tra "chữ ký" — tất cả đều không cứu được bạn. Mã độc **đã nằm sẵn trong thứ bạn tải về**, chứ không phải do kẻ tấn công đưa vào sau.
+
+**Cơ chế (theo trí nhớ của tôi):**
+
+1. Kẻ tấn công đã **đưa mã vào kho mã nguồn của dự án xz** thông qua một loạt thay đổi bình thường về mặt hình thức, và bản phát hành được tạo ra từ kho đó nên **mang theo mã**.
+2. Bản thân mã **không nằm dưới dạng mã độc dễ đọc**. Nó được **giấu trong các tệp trông như dữ liệu kiểm thử/đo hiệu năng** — kiểu dữ liệu nhị phân mà người ta quen bỏ qua. *Tôi mô tả theo trí nhớ; tôi **không nhớ** tên tệp và cũng **không nhớ chính xác** thuật toán/định dạng mã hoá dùng để che.*
+3. Trong **quá trình biên dịch**, các tệp đó **được giải mã và chèn vào mã nguồn liblzma**. Tức là **người xem mã nguồn trước khi biên dịch cũng rất dễ bỏ sót** — vì nó chỉ xuất hiện ở bước giải mã trong lúc build.
+4. Kết quả: **liblzma được cài đặt từ bản nhiễm sẽ chứa mã độc trong mã nhị phân của nó**, và mọi chương trình liên kết với liblzma — trong đó có **OpenSSH** — sẽ mang theo nó.
+5. Mục tiêu của mã độc, theo trí nhớ: **thay đổi cách kiểm tra khoá công khai** mà OpenSSH dùng, để **một đoạn khoá của kẻ tấn công được coi là hợp lệ** → tức là **đăng nhập được vào máy đó bằng quyền root**. *Tôi **không chốt được** tên hàm cụ thể hay kiểu khoá cụ thể; tôi **không nêu** chi tiết kỹ thuật mình không chắc.*
+
+**Cách phát hiện — chi tiết đáng ghi vào bài vì nó cho thấy tại sao sự cố này có thể tồn tại âm thầm:**
+
+- Tôi nhớ chi tiết quan trọng này: sự cố lộ ra **không phải vì ai đó tìm mã độc**, mà vì **đăng nhập SSH bị chậm bất thường** (vài trăm mili giây). Người phát hiện lần theo hiệu năng, truy về thay đổi trong quy trình build của xz, và từ đó tìm ra mã.
+- **Bài học:** một sự cố chuỗi cung ứng có thể tồn tại mà không bị phát hiện, cho tới khi ai đó để ý đến **triệu chứng thứ yếu** (chậm, lỗi, treo) chứ không phải triệu chứng chính.
+
+### 2. Phiên bản và cấu hình nào có nguy cơ
+
+**Phiên bản:**
+
+- Theo trí nhớ của tôi, các bản phát hành **có mã độc là 5.6.0 và 5.6.1**; bản **5.6.2** phát hành ngay sau sự cố là bản đã loại bỏ mã. *Tôi **khá chắc** về cặp 5.6.0/5.6.1 và 5.6.2; tôi **không chắc** ngày phát hành cụ thể của từng bản.*
+- **Quan trọng:** còn có các **bản xây dựng từ kho mã nguồn (git) trong một khoảng thời gian** cũng bị ảnh hưởng, không chỉ hai bản phát hành. *Mức chắc chắn: trung bình — tôi nhớ có nhắc tới việc này nhưng không nhớ rõ phạm vi.*
+
+**Cấu hình / điều kiện kích hoạt:**
+
+- Đây là phần tôi **rất dễ bịa**, nên tôi nói thẳng: mã chỉ trở thành backdoor **hoạt động** dưới một tập điều kiện build và runtime cụ thể (liên quan tới trình biên dịch, thư viện nền và cách khởi động dịch vụ). *Tôi **không liệt kê** các điều kiện đó, vì nhớ sai còn tệ hơn không nói.*
+- **Điều kiện quan trọng nhất, mà tôi khá chắc:** mã chỉ nằm trong thư viện đã cài, và chỉ có tác dụng khi chương trình **liên kết với liblzma bị nhiễm** — tiêu biểu là **dịch vụ SSH**. Nếu hệ thống không dùng OpenSSH, hoặc OpenSSH không dùng liblzma của xz, thì **phạm vi hẹp hơn nhiều**.
+- Do đó, khi hỏi *"cài xz 5.6.1 lên máy có bị ảnh hưởng không?"* thì **câu trả lời phải là "không nhất thiết"** — còn khi hỏi *"máy có bản build liblzma lấy từ 5.6.0/5.6.1 không?"* thì câu trả lời là **"phải kiểm tra"**. Tôi thấy nhiều bài viết trộn hai câu hỏi này.
+
+### 3. Hậu quả có thể xảy ra so với điều đã xác nhận
+
+Đây chính là chỗ bài bạn **nên tách rõ**, vì đây là nơi dễ nhảy từ "mã độc có thể làm gì" sang "đã xảy ra".
+
+| | **Có thể xảy ra (theo cơ chế)** | **Đã được xác nhận** |
+|---|---|---|
+| Đăng nhập vào máy bằng khoá của kẻ tấn công | **Có — đây là mục tiêu thiết kế của mã** | Không có báo cáo công khai nào tôi biết |
+| Từ quyền root trên máy đó điều khiển hệ thống | **Có** | Không có báo cáo công khai nào tôi biết |
+| Số máy bị khai thác thành công | — | **Tôi không có dữ liệu và không nêu số liệu** |
+| Sự tồn tại của backdoor trong bản phát hành | **Có — đã xác nhận** | **Sự thật đã được công khai rõ ràng** |
+| Việc backdoor thực sự kích hoạt được trên hệ thống đang dùng | — | **Không có bằng chứng công khai nào** |
+
+**Nói thẳng điều quan trọng nhất của mục này:** backdoor tồn tại **là đã xác nhận**; việc nó **được dùng để xâm nhập thật** thì **chưa có bằng chứng công khai**. Nếu bài bạn viết "hacker đã dùng backdoor này để xâm nhập hàng nghìn máy chủ" thì đó là **khẳng định không có căn cứ** — và đây là loại nói quá mà tôi đã gặp nhiều lần trong các bài tóm tắt sự cố này.
+
+### 4. Cách xử lý
+
+**Với hệ thống nghi ngờ đã bị nhiễm:**
+
+1. **Không được chỉ nâng cấp xz rồi cho là xong.** Đây là điểm then chốt: mã độc nằm **trong các tệp nhị phân đã cài**, nên nâng cấp thư viện không tự xóa mã độc khỏi những gì đã chạy và những gì đã liên kết với nó. *Đây là suy luận của tôi từ bản chất "mã nằm trong tệp đã cài", và tôi nghĩ đây là đúng — nhưng hãy đối chiếu hướng dẫn của nhà phân phối trước.*
+2. **Cài lại/hiệu lực lại các gói từ nguồn sạch** của nhà phân phối — vì đó là cách chắc chắn loại được tệp nhị phân nhiễm.
+3. **Kiểm tra dấu vết xâm nhập**, vì nếu backdoor đã kịp hoạt động thì việc thay thư viện không thay thế được việc điều tra.
+4. **Rà soát cơ chế SSH của hệ thống** để chắc chắn không còn cửa vào nào khác.
+
+**Với hệ thống không bị nhiễm (phần lớn):** cập nhật bản xz sạch, và **không cần** làm gì thêm.
+
+*Về việc "cài đặt lại toàn bộ hệ thống" có cần không: tôi **không dám khẳng định** là cần, vì điều đó phụ thuộc vào việc mã có kịp kích hoạt hay không.*
+
+### 5. "Có phải mọi bản Linux đều bị ảnh hưởng không?" — Câu trả lời là KHÔNG
+
+Đây là câu bạn hỏi rất đúng, và cũng là câu hay bị nói quá nhất. Tôi trả lời thẳng:
+
+> **Không. Đây không phải kiểu sự cố "mọi hệ thống Linux đều bị ảnh hưởng".**
+
+**Các lý do — mỗi lý do đủ để loại trừ phạm vi rộng:**
+
+| Lý do | Diễn giải |
+|---|---|
+| Mã chỉ nằm trong **hai bản phát hành** cụ thể | Ai dùng bản khác, hoặc dùng bản của nhà phân phối đã vá, thì không liên quan |
+| Nhà phân phối **đóng gói riêng** | Gói của họ được xây dựng trong môi trường của họ, không phải mã nhiễm |
+| Điều kiện build/runtime cụ thể | Mã có thể **không kích hoạt** dù đã được cài |
+| Chỉ ảnh hưởng chương trình **liên kết với liblzma bị nhiễm** | Hệ thống không dùng OpenSSH/liblzma thì phạm vi hẹp hơn nhiều |
+
+**Điều tôi nhớ và khá chắc:** sự cố này **không lọt vào một bản phát hành ổn định phổ biến nào** của các nhà phân phối lớn. Đây là tin tốt và cũng là điểm nên nói trong bài. *Tuy nhiên tôi **không chắc** chi tiết với từng nhà phân phối, nên **không nêu tên** và **không nêu số liệu**.*
+
+**Cách trả lời vấn đáp cho câu hỏi này — dùng công thức này:**
+
+> *"Không phải mọi hệ thống Linux. Mã độc chỉ nằm trong hai bản phát hành 5.6.0 và 5.6.1 của xz, còn các nhà phân phối đóng gói riêng và đã loại bỏ nó. Vì vậy phạm vi bị ảnh hưởng hẹp hơn rất nhiều so với cảm giác ban đầu."*
+
+---
+
+### Bảng tách sự thật và suy luận
+
+| Nội dung | Trạng thái |
+|---|---|
+| Đây là sự cố chuỗi cung ứng, không phải lỗ hổng dùng sai cách | **Sự thật — điểm phải nói đúng** |
+| Mã độc nằm trong bản phát hành upstream, được biên dịch vào liblzma | **Sự thật** |
+| Công cụ phát hiện là người ngoài, ngày 29/03/2024 | **Khá chắc về ngày; không nêu tên người** |
+| Mã được che giấu trong tệp trông như dữ liệu kiểm thử và giải mã lúc build | **Khá chắc về nguyên tắc, không chắc chi tiết** |
+| Tên tệp chứa mã che giấu | **Tôi không nhớ — không nêu** |
+| Mục tiêu là thay đổi kiểm tra khoá để đăng nhập quyền root | **Khá chắc về mục tiêu, không chắc chi tiết hàm/khoá** |
+| Bản có mã là 5.6.0 và 5.6.1; 5.6.2 đã loại bỏ | **Khá chắc** |
+| Ngày phát hành từng bản | **Tôi không nhớ chắc** |
+| Còn có bản build từ git trong một khoảng thời gian bị ảnh hưởng | **Trí nhớ mức trung bình** |
+| Điều kiện build/runtime kích hoạt backdoor | **Tôi không liệt kê — không nhớ** |
+| Chỉ ảnh hưởng chương trình liên kết liblzma bị nhiễm, tiêu biểu OpenSSH | **Khá chắc** |
+| OpenSSH có phải mục tiêu cụ thể | **Khá chắc** |
+| Backdoor tồn tại là đã xác nhận | **Sự thật** |
+| Có bằng chứng công khai nào về việc backdoor được dùng để xâm nhập | **Không có — không khẳng định** |
+| Số máy bị khai thác / tên nạn nhân | **Tôi không nêu** |
+| Sự cố không lọt vào bản phát hành ổn định phổ biến của nhà phân phối lớn | **Khá chắc** |
+| Chi tiết với từng nhà phân phối | **Tôi không chắc — không nêu tên** |
+| Nâng cấp xz không tự loại mã khỏi tệp nhị phân đã cài | **Suy luận của tôi, hợp lý** |
+| Có cần cài đặt lại toàn bộ hệ thống không | **Tôi không dám khẳng định** |
+| Một sự cố chuỗi cung ứng có thể tồn tại mà chỉ lộ ra qua triệu chứng phụ | **Nhận xét phân tích của tôi** |
+| CVSS của CVE-2024-3094 | **Tôi không chắc — không nêu con số** |
+
+---
