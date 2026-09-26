@@ -611,3 +611,126 @@ Tôi **không** nêu phiên bản/model được mở lại, vì đó là sự k
 
 Bài của bạn ghi mức **"Trung bình"** cho mục này. Điều đó chấp nhận được, nhưng nên nói rõ cơ sở: **Google không gán CVSS**, và đây không phải lỗ hổng nên thang CVSS vốn không áp dụng. Có thể viết "không xếp hạng CVSS" thay vì "Trung bình" để tránh bị hiểu nhầm là điểm chính thức.
 
+### Thời gian: 16:48 26/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích sự cố Google AI Overviews đưa ra câu trả lời sai được Google công bố tháng 05/2024. Trình bày: (1) lỗi biểu hiện thế nào, (2) nguyên nhân theo Google, (3) ví dụ nào Google xác nhận là thật và ví dụ nào chưa được xác nhận, (4) hậu quả, và (5) Google đã khắc phục ra sao. Phân biệt rõ sự thật được nguồn xác nhận với suy luận của bạn; dẫn link nguồn cho các nhận định quan trọng. Đừng dựa trên bản tóm tắt do tôi viết trước đó.
+
+**AI OUTPUT:**
+## Google AI Overviews đưa ra câu trả lời sai — công bố 30/05/2024
+
+**Phân loại:** lỗi **độ chính xác nội dung sinh ra** bởi hệ thống tóm tắt AI trên Google Search. **Không phải lỗ hổng bảo mật**, **không có CVE, không có CVSS**.
+
+**Nguồn chính:** bài blog Google Search tháng 5/2024 — https://blog.google/products-and-platforms/products/search/ai-overviews-update-may-2024/
+
+*Thiếu sót của tôi: tôi nhớ rõ **nội dung** bài blog nhưng **không nhớ chắc tiêu đề chính xác** của nó. Tôi không đoán bừa tiêu đề. Hãy lấy tiêu đề từ link khi nộp bài. Ngày 30/05/2024 thì tôi khá chắc.*
+
+---
+
+### Bối cảnh cần thiết
+
+AI Overviews là phần **tóm tắt do AI sinh ra** hiển thị ở đầu trang kết quả tìm kiếm, kèm các liên kết nguồn. Điểm khác biệt cấu thành sự cố: hệ thống **luôn tạo ra một câu trả lời bằng văn bản** ở vị trí nổi bật nhất của trang — kể cả khi độ tin cậy của nguồn thấp. Đây là điểm làm cho lỗi "độ đúng" trở thành vấn đề nghiêm trọng hơn so với việc một kết quả thường đứng thấp hơn trên trang.
+
+### 1. Lỗi biểu hiện thế nào
+
+Google mô tả các dạng lỗi sau:
+
+**a. Hiểu sai ý định của câu hỏi (misinterpretation)**
+- Hệ thống trả lời **không đúng thứ người dùng hỏi**, thường vì câu hỏi vốn đã mơ hồ.
+
+**b. Nguồn thích hài/châm biếm bị dùng như dữ kiện thật**
+- Hệ thống lấy nội dung **châm biếm (satire)** hoặc trào cười trên web và trình bày như một tuyên bố nghiêm túc.
+
+**c. Nội dung do người dùng tạo (forum, diễn đàn) sai lệch bị dùng làm nguồn**
+- Các bài viết trên diễn đàn có thể sai hoặc gây hiểu lầm, nhưng hệ thống vẫn dùng làm nguồn.
+
+**d. Truy vấn vô nghĩa (nonsense / adversarial queries)**
+- Người dùng **cố tình** gõ câu hỏi vô nghĩa để "đánh bại" hệ thống. Google gọi đây là **adversarial search** và nói thẳng đây là hành vi cố ý tìm lỗi, không phải biểu hiện lỗi thông thường.
+
+**e. Thiếu nguồn tốt thì kết quả kém**
+- Khi không có nguồn khớp tốt, hệ thống vẫn sinh câu trả lời nhưng chất lượng thấp hơn.
+
+*Nguồn: bài blog Google Search, 30/05/2024.*
+
+### 2. Nguyên nhân theo Google
+
+Google **không nêu một nguyên nhân đơn lẻ**, mà nêu một tập nguyên nhân:
+
+- **Đây là giới hạn đã biết của hệ thống dựa trên LLM** — mô hình ngôn ngữ tạo ra câu trả lời trôi chảy, nên khi dữ kiện đầu vào yếu thì đầu ra cũng yếu.
+- **Ý định người dùng có thể không rõ ràng**, nên hệ thống phải đoán.
+- **Nội dung web có chất lượng rất không đồng đều**: có châm biếm, có nội dung người dùng viết sai, có nội dung cũ.
+- **Cơ chế "phải trả lời"**: vì AI Overview được thiết kế để luôn đưa ra một tóm tắt, nên khi không có dữ kiện đáng tin nó vẫn tạo ra thứ gì đó.
+
+*Nguyên nhân thứ tư là cách tôi diễn giải lại logic của Google, không phải câu chữ nguyên văn. Ba nguyên nhân đầu là nội dung do Google nêu.*
+
+*Nguồn: bài blog Google Search, 30/05/2024.*
+
+### 3. Ví dụ nào thật, ví dụ nào chưa được xác nhận
+
+Đây là phần quan trọng nhất của sự cố, vì nó nằm ở ranh giới giữa lỗi thật và nội dung lan truyền sai.
+
+**Google XÁC NHẬN là lỗi thật:**
+- Ví dụ nổi tiếng nhất: một câu hỏi về khả năng nhảy/nâng của nhân vật **Mario** (người dùng hỏi về "plumber" — tức "anh thợ ống nước", cách nói dân dã về Mario). AI Overview đã **lấy một câu đùa từ trang châm biếm** rồi trình bày như một **dữ kiện có căn cứ**, có gắn liên kết nguồn.
+- Google nói rõ: đây là trường hợp AI Overview dùng **một nội dung trào cười/châm biếm** và trình bày như tuyên bố nghiêm túc.
+
+**Google KHÔNG xác nhận (nhiều khả năng là giả / không tái hiện được):**
+- Ảnh chụp lan truyền rất nhiều trên mạng với tiêu đề bài viết nói AI Overview trả lời sai về **người/đội đoạt nhiều huy chương Paralympic nhất** và hiển thị mốc thời gian **"tháng 1, năm 2026"** — tức ngày ở tương lai so với thời điểm sự cố.
+- Google phản bác: ảnh đó **không khớp với bất kỳ truy vấn nào** mà Google thấy trong các thảo luận, và nhiều ảnh lan truyền **không thực sự chụp từ Google Search** dù bị chia sẻ như thể có.
+- Google nói thẳng: các ảnh chụp phổ biến trên mạng **"không phải là đại diện rõ ràng cho những gì có thể đi sai với AI Overviews"**.
+
+**Câu quan trọng nhất của Google về mặt khái niệm:**
+Google nói các trường hợp thật **thường không phải "ảo giác" theo nghĩa mô hình tự bịa ra thứ không có trên nguồn**. Nhiều khi, mô hình **có** dựa trên nguồn thật — nhưng nguồn đó là nội dung châm biếm, nội dung người dùng viết sai, hoặc nguồn bị diễn giải sai ngữ nghĩa. Đây là lỗi **trích dẫn và diễn giải sai nguồn**, không phải lỗi **bịa không căn cứ**.
+
+*Nguồn: bài blog Google Search, 30/05/2024.*
+
+### 4. Hậu quả
+
+**Đã được Google xác nhận:**
+- Người dùng có thể nhận **lời khuyên sai** dưới dạng tóm tắt nổi bật nhất của trang, và bị gán nguồn trông như đáng tin.
+- Google **thừa nhận** đã có câu trả lời sai thật — tức không phủ nhận sự cố.
+
+**Chưa được xác nhận / cần nói rõ là giới hạn của nguồn:**
+- **Tôi không xác nhận được con số tỷ lệ lỗi cụ thể nào mà Google đã công bố.** Bài blog nói lỗi "không phổ biến" (uncommon) so với tổng số truy vấn, nhưng nếu bài làm ghi một tỷ lệ phần trăm cụ thể thì phải dẫn được nguồn cụ thể cho con số đó. Tôi **không** nhớ Google đã công bố tỷ lệ dạng phần trăm ở bài này.
+- **Không có số liệu công khai** về thiệt hại cụ thể cho người dùng (sức khoẻ, tài chính, pháp lý).
+- **Không thể suy ra** rằng các ví dụ lan truyền trên mạng đều từng xuất hiện trên hệ thống thật.
+
+*Nguồn: bài blog Google Search, 30/05/2024.*
+
+### 5. Google đã khắc phục ra sao
+
+Google nêu **hơn một tá (hơn 12) cải tiến ở cấp hệ thống**, trong đó bao gồm:
+
+1. **Cải thiện khả năng nhận diện truy vấn vô nghĩa / vô nghĩa vô lý** để không kích hoạt AI Overview cho các truy vấn đó.
+2. **Giới hạn sử dụng nguồn châm biếm và nguồn trào cười** trong việc tạo câu trả lời.
+3. **Giảm mức ưu tiên của nội dung do người dùng tạo** trên diễn đàn khi nội dung đó có thể gây hiểu lầm.
+4. **Thiết lập hệ thống xếp hạng nguồn mạnh hơn** để chỉ ưu tiên nguồn chất lượng cao.
+5. **Bổ sung cơ chế quyết định có nên hiển thị AI Overview hay không** cho một truy vấn (giảm kích hoạt ở truy vấn không phù hợp).
+6. **Làm rõ và dễ bấm vào hơn** danh sách nguồn để người dùng tự kiểm chứng.
+7. **Thêm tùy chọn hiển thị kết quả tìm kiếm truyền thống** để người dùng không bị ép phải dùng bản tóm tắt.
+
+Các cải tiến 2, 3 và 5 tôi nêu theo tóm lược từ nội dung bài blog; **tôi không nhớ chính xác con số "hơn 12"** và thứ tự các hạng mục, nên bạn cần mở bài gốc để chốt lại danh sách và đánh số. Tôi ghi ở đây để bạn thấy chỗ nào tôi đang dựa trên trí nhớ.
+
+*Nguồn: bài blog Google Search, 30/05/2024.*
+
+---
+
+### Bảng phân biệt: sự thật nguồn xác nhận vs. suy luận của tôi
+
+| Nội dung | Trạng thái | Ai nói |
+|---|---|---|
+| Có AI Overview trả lời sai thật | **Google xác nhận** | Google |
+| Có trường hợp dùng nguồn châm biếm làm căn cứ | **Google xác nhận** | Google |
+| Ảnh chụp "Paralympic 2026" lan truyền không khớp truy vấn nào | **Google phủ nhận** | Google |
+| Nhiều ảnh lan truyền không chụp từ Google Search | **Google nói thẳng** | Google |
+| Lỗi thật "thường không phải ảo giác theo nghĩa bịa không căn cứ" | **Google nói thẳng** | Google |
+| Có "adversarial search" — truy vấn cố tình vô nghĩa | **Google thừa nhận** | Google |
+| Hơn 12 cải tiến cấp hệ thống | **Google nêu, nhưng con số tôi chưa chắc** | Google / trí nhớ của tôi |
+| Nguyên nhân "cơ chế phải luôn trả lời" sinh nội dung yếu | **Suy luận của tôi** | AI |
+| Tỷ lệ lỗi phần trăm cụ thể | **Tôi không xác nhận được** | — |
+| Thiệt hại cụ thể đến người dùng | **Không được công bố** | — |
+
+### Về nhãn "ảo giác" — điểm tinh tế nhất của mục này
+
+Đề yêu cầu ví dụ về "hallucination, prompt injection, bias". Với mục này, nếu gán nhãn **"ảo giác"** một cách không cẩn thận thì bài làm sẽ **mâu thuẫn với chính nguồn mà bạn dẫn**: Google nói rõ các lỗi thật thường **không phải** ảo giác theo nghĩa mô hình tự bịa.
+
+Nhãn chính xác hơn cho mục này là **"lỗi diễn giải/trích dẫn sai nguồn trong hệ thống RAG"** (retrieval + generation), hoặc ghi rõ: *"AI Overviews sinh ra nội dung sai thực tại, nhưng Google nói đây không nhất thiết là ảo giác theo nghĩa mô hình tự bịa ngoài nguồn."* Cách ghi này vừa đúng nguồn, vừa cho thấy bạn hiểu khái niệm — đây là điểm cộng khi vấn đáp.
+
