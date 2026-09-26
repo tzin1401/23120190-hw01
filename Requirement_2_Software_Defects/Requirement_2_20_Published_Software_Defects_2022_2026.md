@@ -123,7 +123,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng theo Microsoft**.
 - **Hậu quả:** Microsoft ghi nhận lạm dụng có mục tiêu ở phạm vi hạn chế. Nguy cơ chính là thông tin xác thực bị lợi dụng để xác thực tới hệ thống khác; Outlook web, Mac, iOS và Android không nằm trong phạm vi lỗi này.
 - **Cách khắc phục:** Cập nhật **Outlook for Windows** dù thư được lưu ở đâu; dùng công cụ kiểm tra mục MAPI độc hại do Microsoft cung cấp, điều tra tài khoản liên quan.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #13 (ảo giác về thuộc tính MAPI gây lỗi):** Trong câu trả lời của **OpenCode – Big Pickle, 00:04 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI nói kẻ tấn công đặt đường dẫn UNC làm “**tên**” của một thuộc tính MAPI tùy chỉnh, rồi Outlook phân giải tên thuộc tính đó như tài nguyên mạng. [Thông báo MSRC của Microsoft](https://www.microsoft.com/en-us/msrc/blog/2023/03/microsoft-mitigates-outlook-elevation-of-privilege-vulnerability) xác định đường dẫn nằm **trong giá trị** của thuộc tính thông điệp **`PidLidReminderFileParameter`**; bản vá ngăn Outlook dùng đường dẫn này để phát âm thanh nhắc nhở khi nó trỏ ra ngoài mạng tin cậy. AI đã đổi vị trí dữ liệu từ giá trị sang tên thuộc tính và tự dựng một nhánh xử lý “định nghĩa thuộc tính” mà nguồn không nêu. **Sửa đúng:** thông điệp độc hại mang đường dẫn UNC trong `PidLidReminderFileParameter`, khiến Outlook for Windows có thể kết nối SMB và để lộ thông tin thương lượng NTLM mà không cần người dùng tương tác.
 
 ### 14. NetScaler ADC/Gateway làm lộ dữ liệu nhạy cảm — CVE-2023-4966 (2023)
 
