@@ -114,7 +114,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng — đánh giá của báo cáo** vì đã có khai thác và truy cập trái phép.
 - **Hậu quả:** Barracuda xác nhận một số thiết bị có mã độc duy trì truy cập và một số có bằng chứng dữ liệu bị lấy ra.
 - **Cách khắc phục:** Barracuda đã triển khai bản vá ngày 20/05/2023; với **thiết bị đã bị xâm nhập**, hãng tiếp tục khuyến nghị **thay thiết bị**, rồi điều tra và đổi thông tin xác thực liên quan.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #12 (ảo giác về cơ chế lỗi):** Trong câu trả lời của **OpenCode – Big Pickle, 00:00 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI khẳng định nguyên nhân gốc là “**path traversal khi giải nén TAR (dạng Zip Slip)**”, diễn giải tên tệp chứa `../` sẽ bị ghi ra ngoài thư mục đích rồi dẫn tới RCE. [Thông báo kỹ thuật của Barracuda](https://trust.barracuda.com/security/esg-vulnerability) xác định đây là **chèn lệnh từ tên tệp trong kho TAR**: tên tệp được định dạng để lệnh hệ thống chạy qua toán tử **`qx` của Perl**, với quyền của tiến trình ESG. Nguồn không mô tả bước ghi tệp vượt thư mục như AI khẳng định; đây là cơ chế *path traversal* khác với cơ chế *command injection* đã được hãng công bố. AI còn đánh dấu cách giải thích Zip Slip là “Sự thật” dù mâu thuẫn với nguồn. **Sửa đúng:** tệp TAR độc hại kích hoạt thực thi lệnh qua xử lý tên tệp thiếu kiểm tra; không mô tả CVE-2023-2868 là lỗi giải nén ghi tệp ra ngoài thư mục.
 
 ### 13. Outlook for Windows gửi thông tin xác thực NTLM — CVE-2023-23397 (2023)
 
