@@ -177,7 +177,7 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng, CVSS 10,0 theo React Team**.
 - **Hậu quả:** Máy chủ ứng dụng hỗ trợ React Server Components có thể bị thực thi mã trái phép.
 - **Cách khắc phục:** Nâng gói bị ảnh hưởng lên phiên bản vá **19.0.1, 19.1.2 hoặc 19.2.1**, hoặc bản mới hơn trong nhánh tương ứng; cập nhật framework dùng các gói đó theo hướng dẫn React.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #19 (ảo giác về đợt công bố và bản vá):** Trong câu trả lời của **OpenCode – Big Pickle, 00:37 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI nói CVE-2025-55182 và CVE-2025-55183 “**cùng đợt công bố**”, “**cùng nguyên nhân gốc, cùng đợt vá**”. [Thông báo đầu tiên của React Team](https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components) công bố **CVE-2025-55182 (RCE) ngày 03/12/2025**. [Thông báo tiếp theo](https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components) nói lỗi **CVE-2025-55183 (lộ mã nguồn)** được phát hiện khi các nhà nghiên cứu kiểm tra bản vá RCE và chỉ **công bố cùng bản vá bổ sung ngày 11/12/2025**. React còn lưu ý người đã cập nhật sau đợt đầu phải cập nhật tiếp cho các lỗi mới. Vì vậy AI đã nhập hai đợt công bố và khắc phục thành một, dễ khiến người đọc hiểu nhầm bản vá RCE ban đầu cũng xử lý 55183. **Sửa đúng:** phân biệt 55182 công bố/vá ngày 03/12 với 55183 được công bố/vá sau ngày 11/12; khi đánh giá hệ thống cần kiểm tra các thông báo và bản vá tiếp theo.
 
 ### 20. SharePoint Server tại chỗ bị RCE — CVE-2025-53770 (2025)
 
