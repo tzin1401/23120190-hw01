@@ -2999,3 +2999,137 @@ Hãy giải thích CVE-2025-55182: lỗi nằm ở đâu trong React Server Comp
 | Lỗi deserialization là tiền đề của RCE, không phải lỗi logic nhỏ | **Phân tích của tôi** |
 
 ---
+### Thời gian: 00:40 27/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Hãy giải thích CVE-2025-53770 trên SharePoint Server: điều kiện khai thác, sản phẩm bị ảnh hưởng, điều đã xác nhận về tấn công thực tế, hậu quả và biện pháp khắc phục, gồm cập nhật và xử lý khóa liên quan. Phân biệt SharePoint Server tại chỗ với SharePoint Online; dẫn Microsoft.
+
+**AI OUTPUT:**
+## CVE-2025-53770 — SharePoint Server tại chỗ: giả mạo yêu cầu, dẫn tới thực thi mã từ xa
+
+**Phân loại:** lỗ hổng thật do Microsoft công bố, thuộc loại **giả mạo (spoofing)** dẫn tới **thực thi mã từ xa**, trên **SharePoint Server cài đặt tại chỗ**.
+
+**Nguồn:** hướng dẫn khách hàng của Microsoft MSRC đăng **19/07/2025**, cùng hồ sơ CVE trong công cụ theo dõi cập nhật của Microsoft. *Mức chắc chắn về ngày: khá chắc. Tôi **không chốt được** URL chính xác — phải lấy từ MSRC.*
+
+**Mức độ:** theo trí nhớ **CVSS 9,8** cho CVE-2025-53770. *Khá chắc, cần xác nhận. CVE-2025-55171... nói chính xác: CVE-2025-53771 đi kèm có điểm khác; tôi **không chốt** con số.*
+
+**Cảnh báo quan trọng:** đây **không phải một CVE đơn lẻ**. Microsoft yêu cầu khách hàng vá **hai lỗ hổng cùng lúc** (53770 và 53771), và bản vá đã phát hành lần đầu **đã bị xác nhận là chưa đủ** nên phải vá tiếp. Tôi trình bày ở mục 6.
+
+---
+
+### 1. Điều kiện khai thác
+
+Tách thành hai tầng:
+
+**Tầng kỹ thuật (cần cho để chạy mã trên máy chủ):**
+- Máy chủ phải chạy **SharePoint Server tại chỗ** và **còn chưa vá**.
+- Kẻ tấn công gửi yêu cầu HTTP với dữ liệu được chế tạc tới một điểm cuối (endpoint) của SharePoint; dữ liệu đó đi qua bước xử lý không kiểm tra đúng nguồn gốc, và từ đó phía máy chủ **thực thi mã** với quyền hệ thống.
+- *Tôi **không** nêu tên endpoint cụ thể và **không** nêu cấu trúc payload. Lý do: tôi không chắc chính xác, và đây là loại chi tiết mà bịa ra chỉ làm bài xấu đi mà không giúp ích cho phần phân tích lỗ hổng.*
+- *Mức chắc chắn về việc có cần đồng thời 53771 để không cần xác thực hay không: **không chắc**. Xem mục 2.*
+
+### 2. Quan hệ giữa 53770 và 53771 — chỗ dễ gán nhầm nhất
+
+Đây là điểm tôi muốn bạn ghi vào bài cho chính xác, vì tôi nhớ có nhiều tóm tắt gộp hai lỗi này thành một.
+
+| | CVE-2025-53770 | CVE-2025-53771 |
+|---|---|---|
+| Loại theo Microsoft | **Giả mạo (spoofing)** | **Nâng quyền (elevation of privilege)** |
+| Hệ quả tôi nhớ | Thực thi mã từ xa | Nâng quyền sau khi đã có bước đầu |
+| Đi点 chung | Cùng sản phẩm, cùng đợt Microsoft Security Response Center xử lý | Cùng sản phẩm, cùng đợt |
+
+*Tôi **không chốt được** Microsoft mô tả chuỗi khai thác chính xác là gì, và **không nêu** một loại kỹ thuật hay gadget cụ thể nào. Những bài viết tôi nhớ có mô tả kiểu "dùng lỗi nâng quyền để thiết lập phiên rồi mới khai thác lỗi giả mạo", nhưng **tôi không dám khẳng định** thứ tự đó.*
+
+**Điều chắc chắn, và cũng là điều duy nhất bạn cần cho bài:** Microsoft yêu cầu **cài cả hai bản vá**. Vì vậy nếu bạn viết "vá 53770" là **chưa đủ**.
+
+### 3. Sản phẩm bị ảnh hưởng
+
+- **SharePoint Server cài đặt tại chỗ (on-premises)** — đây là phạm vi của lỗ hổng. Tôi nhớ các phiên bản được Microsoft liệt kê là **SharePoint Server 2016, SharePoint Server 2019 và SharePoint Subscription Edition**. *Mức chắc chắn về danh sách phiên bản: khá chắc, phải đối chiếu MSRC.*
+- **SharePoint Online (trong Microsoft 365): không nằm trong phạm vi.** Đây là câu Microsoft trả lời trực tiếp cho các khách hàng dùng Microsoft 365.
+
+**Vì sao phân biệt này quan trọng, thay vì là chi tiết hình thức** — đây là phần tôi muốn bạn dùng để vấn đáp:
+- Kiến trúc khác nhau: bản cài tại chỗ chạy trên máy chủ của doanh nghiệp, còn bản đám mây do Microsoft vận hành và có lớp bảo vệ ở phía nhà cung cấp.
+- Người chịu trách nhiệm vá khác nhau: với bản tại chỗ, **quản trị viên của doanh nghiệp** phải tự vá; với bản đám mây, việc nằm ở phía Microsoft.
+- Đây cũng là lý do vì sao hậu quả của lỗi này nghiêm trọng: kẻ tấn công nhắm vào **hạ tầng tự vận hành**, nơi không có lớp bảo vệ của bên thứ ba.
+
+### 4. Điều đã xác nhận về tấn công thực tế
+
+Đây là phần tôi cần thận trọng nhất, vì "đã bị khai thác" là loại khẳng định dễ bị thổi phồng nhất.
+
+**Những gì tôi cho là đã được Microsoft xác nhận (mức khá chắc, từ trí nhớ):**
+- Microsoft đã xác nhận **đang diễn ra tấn công nhắm vào các hệ thống SharePoint tại chỗ chưa vá**, và đây không chỉ là lấy dữ liệu đơn lẻ mà có dấu hiệu **lan truyền như sâu** (tự nhân bản sang máy khác).
+- Lỗ hổng đã được **vá trong khoảng 1–2 ngày trước khi Microsoft công bố**; nghĩa là khoảng thời gian giữa lúc lộ ra và lúc vá là rất ngắn. *Tôi nhớ có nhận định rằng lần khai thác đầu tiên quan sát được vào khoảng **18/07/2025**, tức gần như đồng thời với bản vá. Mức chắc chắn: trung bình — phải kiểm tra lại mốc chính xác trong hướng dẫn MSRC.*
+- Kẻ tấn công **không chỉ khai thác lỗ hổng mà còn đặt một backdoor lên máy chủ** để giữ quyền sau khi vá. *Đây là điểm tôi nhớ khá rõ và nó giải thích vì sao việc vá không đủ.*
+
+**Những gì tôi cố ý không nói:**
+- **Tôi không nêu tên chiến dịch hay nhóm tấn công.** Tôi có vài tên trong trí nhớ (Microsoft dùng mã tên riêng, các hãng bảo mật dùng mã tên riêng nữa) nhưng **tôi không chắc tên nào ghép với tên nào**, và ghi nhầm tên chiến dịch là lỗi rất dễ bị bắt. Nếu bài cần, hãy lấy trực tiếp từ hướng dẫn MSRC.
+- **Tôi không đưa số nạn nhân, số hệ thống bị ảnh hưởng, hay quốc gia hay tổ chức nào bị tấn công.** Không có dữ liệu chắc chắn.
+
+### 5. Hậu quả
+
+| Hậu quả | Mức xác nhận |
+|---|---|
+| Thực thi mã tùy ý trên máy chủ SharePoint với quyền hệ thống | **Bản chất lỗ hổng** |
+| Chiếm quyền máy chủ, từ đó đọc/sửa dữ liệu trong site, tài khoản, thư | **Hệ quả trực tiếp của RCE** |
+| Có thể dùng máy chủ đã chiếm làm bước tiếp vào hệ thống khác trong mạng | **Tôi suy luận** — nhưng đây là hiểm họa chuẩn khi RCE xảy ra |
+| Mất khả năng truy cập site, gián đoạn dịch vụ nội bộ | **Phụ thuộc ứng dụng** |
+| Thời điểm lộ dữ liệu | **Tôi không nêu** — không biết hệ thống cụ thể nào bị đọc |
+
+**Điểm cần nhấn:** đây là loại lỗi mà hậu quả **không dừng ở dữ liệu của SharePoint**. Kẻ tấn công có thể cài phần mềm độc, dùng máy chủ này làm bước tiếp. Vì vậy câu trả lời đúng là: *"thực thi mã với quyền hệ thống, từ đó kiểm soát máy chủ cùng toàn bộ dữ liệu và tài khoản trên site đó"* — **không** phải *"lộ thông tin người dùng"*.
+
+### 6. Biện pháp khắc phục
+
+**a) Cập nhật**
+- Microsoft đã phát hành bản vá. *Tôi **không** ghi mã bản vá cụ thể từ trí nhớ — đây là loại mã mà ghi sai một con số là hậu quả ngay lập tức, và phải tra đúng hệ thống của chính mình.*
+- Phải vá **cả 53770 và 53771**.
+- **Quan trọng: tôi nhớ bản vá đầu tiên đã bị xác nhận là chưa đầy đủ, và Microsoft phải phát hành bản vá tiếp theo.** Vì vậy câu trả lời đúng ở vấn đáp là: *"bản vá đầu tiên của ngày 19/07/2025 đã được Microsoft xác nhận là chưa đủ, cần áp dụng bản cập nhật bổ sung mà Microsoft phát hành sau đó."* Đây là điểm khác biệt rất dễ bị trừ điểm nếu nói chung chung "cập nhật lên bản vá".
+
+**b) Xử lý sau khi vá — phần tôi cho là quan trọng nhất, và tôi tự nhận là thiếu**
+
+Vì đã có bằng chứng kẻ tấn công **cài backdoor lên máy chủ**, việc vá chỉ vá cái lỗ hổng, **không đảo ngược được việc đã bị xâm nhập**. Theo tôi hiểu, hướng dẫn của Microsoft có nhắc tới việc dùng công cụ để phát hiện và gỡ backdoor. *Mức chắc chắn: trung bình.*
+
+*Điểm tôi thừa nhận không rõ: có một chi tiết về vị trí thư mục mà báo cáo tổng hợp nhắc tới tôi nhớ mơ hồ, và tôi **không dám ghi vào bài** khi chưa đọc hướng dẫn MSRC.*
+
+**c) Xử lý khóa**
+
+Câu hỏi của bạn có nhắc "khóa liên quan". Thẳng thắn: **tôi không xác nhận được Microsoft có yêu cầu xoay vòng (rotate) khóa nào trong vụ này.** Các khả năng tôi nghĩ tới là khóa mã hóa của SharePoint, khóa máy của IIS dùng cho cookie và phiên, hoặc khóa dịch vụ của farm — nhưng **đây là suy đoán của tôi, không phải hướng dẫn của hãng.**
+
+Điểm cần nói rõ: trong các sự cố có thực thi mã từ xa, việc xoay vòng khoá bí mật thường là biện pháp **giảm rủi ro hậu kỳ** (đề phòng thông tin đã bị lấy) chứ không phải bước khắc phục lỗ hổng. Nhưng với SharePoint, nhiều khoá được sinh ra tự động và quản lý qua trang quản trị, nên thao tác xoay vòng cũng không đơn giản như với một ứng dụng thông thường. *Đây là nhận xét của tôi, không phải khuyến nghị của hãng.*
+
+### 7. Câu trả lời cho từng câu hỏi của bạn — dạng ngắn để dùng khi vấn đáp
+
+- **Điều kiện khai thác:** máy chủ SharePoint Server tại chỗ chưa vá, nhận yêu cầu HTTP với dữ liệu chế tạc tới điểm cuối xử lý dữ liệu không kiểm tra nguồn gốc → thực thi mã với quyền hệ thống. Microsoft khuyến nghị vá **cả hai** CVE.
+- **Sản phẩm bị ảnh hưởng:** SharePoint Server 2016, 2019, Subscription Edition bản cài tại chỗ. **Không** phải SharePoint Online.
+- **Tấn công thực tế:** Microsoft xác nhận đang có tấn công, có dấu hiệu tự lan truyền, và kẻ tấn công cài backdoor nên việc vá không thay thế cho việc xử lý hậu kỳ.
+- **Hậu quả:** thực thi mã quyền hệ thống → chiếm máy chủ, đọc/sửa dữ liệu và tài khoản của site, có thể dùng làm bước tiếp vào mạng nội bộ.
+- **Khắc phục:** áp bản vá (kể cả bản cập nhật bổ sung vì bản đầu chưa đủ), dọn backdoor, và xem xét xoay vòng khoá; **không** dừng ở "cài bản vá".
+
+---
+
+### Bảng tách sự thật và suy luận
+
+| Nội dung | Trạng thái |
+|---|---|
+| Lỗ hổng do Microsoft công bố, loại giả mạo dẫn tới RCE | **Khá chắc** |
+| Ngày công bố 19/07/2025 | **Khá chắc** |
+| URL hướng dẫn MSRC | **Tôi không chốt được** |
+| CVE-2025-53770 có CVSS 9,8 | **Khá chắc — cần xác nhận** |
+| CVE-2025-53771 là lỗi nâng quyền, phải vá cùng 53770 | **Khá chắc** |
+| Điểm CVSS của 53771 | **Tôi không chốt** |
+| Chuỗi khai thác chính xác giữa hai lỗi | **Tôi không nêu** |
+| Tên điểm cuối và cấu trúc payload | **Tôi không nêu** |
+| SharePoint Server 2016, 2019, Subscription Edition | **Khá chắc — cần đối chiếu** |
+| SharePoint Online không bị ảnh hưởng | **Khá chắc** |
+| Microsoft xác nhận tấn công đang diễn ra, có dấu hiệu tự lan | **Khá chắc** |
+| Mốc khai thác đầu khoảng 18/07/2025 | **Trí nhớ mức trung bình — cần kiểm tra** |
+| Kẻ tấn công cài backdoor lên máy chủ | **Khá chắc** |
+| Vị trí thư mục backdoor | **Tôi không ghi — không chắc** |
+| Tên chiến dịch / nhóm tấn công | **Tôi không nêu — không chắc** |
+| Số nạn nhân, quy mô | **Tôi không nêu** |
+| Bản vá đầu tiên chưa đủ, phải vá bổ sung | **Khá chắc** |
+| Mã bản vá cụ thể | **Tôi không ghi — lấy từ MSRC** |
+| Microsoft có yêu cầu xoay vòng khóa | **Tôi không xác nhận** |
+| Loại khóa có thể liên quan | **Suy đoán của tôi** |
+| RCE → dùng máy chủ làm bước tiếp vào mạng | **Suy luận của tôi** |
+| Xoay vòng khóa là biện pháp hậu kỳ, không phải khắc phục lỗ hổng | **Phân tích của tôi** |
+| Việc vá không thay thế xử lý hậu kỳ khi đã bị xâm nhập | **Phân tích của tôi — hợp lý** |
+
+---

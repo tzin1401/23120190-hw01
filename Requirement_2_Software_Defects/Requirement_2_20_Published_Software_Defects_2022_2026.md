@@ -1,8 +1,8 @@
 # Yêu cầu 2 — 20 lỗi phần mềm đã công bố (2022–2026)
 
-**Ngày tra cứu:** 24/09/2026. **Tổng số:** 20 lỗi/sự cố riêng biệt; **6 mục liên quan trực tiếp đến AI/LLM** (#01–#06). “Hậu quả” phân biệt điều đã quan sát được với rủi ro có thể xảy ra. Mức độ ghi theo nhà cung cấp/CVSS nếu nguồn nêu rõ; các mức còn lại là **đánh giá của báo cáo**, không phải CVSS chính thức. Với sự cố chất lượng AI không có CVE, “cách khắc phục” là hành động nhà cung cấp đã công bố hoặc hướng xử lý phù hợp.
+**Ngày tra cứu ban đầu:** 24/09/2026; **đối chiếu câu trả lời AI:** 26–27/09/2026. **Tổng số:** 20 lỗi/sự cố riêng biệt; **6 mục liên quan trực tiếp đến AI/LLM** (#01–#06). “Hậu quả” phân biệt điều đã quan sát được với rủi ro có thể xảy ra. Mức độ ghi theo nhà cung cấp/CVSS nếu nguồn nêu rõ; các mức còn lại là **đánh giá của báo cáo**, không phải CVSS chính thức. Với sự cố chất lượng AI không có CVE, “cách khắc phục” là hành động nhà cung cấp đã công bố hoặc hướng xử lý phù hợp.
 
-Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được điền dần sau khi đối chiếu câu giải thích của AI với nguồn gốc. Mỗi nhận định được ghi phải thực sự xuất hiện trong câu trả lời đã lưu ở prompt log; mục chưa kiểm chứng tiếp tục để trống.
+Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở cả 20 mục đã được đối chiếu với câu trả lời thực tế trong [prompt log](../Appendix_A_Prompt_Log.md) và nguồn gốc; mỗi nhận định sai được trích từ lời giải thích của AI cho chính mục đó.
 
 ## A. Lỗi liên quan trực tiếp đến AI/LLM (6)
 
@@ -186,11 +186,11 @@ Phần **“RÀNG BUỘC CỐT LÕI VỀ AI”** ở từng mục được đi�
 - **Mức độ:** **Nghiêm trọng — đánh giá của báo cáo** dựa trên RCE và khai thác thực tế; kiểm tra hồ sơ CVE cho điểm CVSS chính thức nếu cần.
 - **Hậu quả:** Máy chủ SharePoint bị xâm nhập có thể cho phép mã trái phép chạy và dữ liệu bị truy cập; phạm vi từng tổ chức cần điều tra riêng.
 - **Cách khắc phục:** Cài bản cập nhật phù hợp SharePoint Server 2016, 2019 hoặc Subscription Edition; bật AMSI/giám sát, **đổi khóa ASP.NET machine key** và khởi động lại IIS theo hướng dẫn Microsoft.
-- **RÀNG BUỘC CỐT LÕI VỀ AI — 1 điểm thiên kiến/ảo giác trong lời giải thích của AI (sinh viên tự điền):** ________________________________________________
+- **RÀNG BUỘC CỐT LÕI VỀ AI — #20 (gán sai loại cho hai CVE SharePoint):** Trong câu trả lời của **OpenCode – Big Pickle, 00:40 27/09/2026** ở [prompt log](../Appendix_A_Prompt_Log.md), AI lập bảng gọi **CVE-2025-53770 là “Giả mạo (spoofing)”** và **CVE-2025-53771 là “Nâng quyền (elevation of privilege)”**. [Phân tích của Microsoft Threat Intelligence](https://www.microsoft.com/en-us/security/blog/2025/07/22/disrupting-active-exploitation-of-on-premises-sharepoint-vulnerabilities/) xác định 53770 là lỗi **thực thi mã từ xa** liên quan tới CVE-2025-49704 trước đó, còn 53771 là lỗi **vượt cơ chế bảo vệ** cho CVE-2025-49706 (lỗi giả mạo) trước đó. AI đã gán nhãn giả mạo của lỗi cũ cho 53770 và gọi sai 53771 là nâng quyền, làm sai vai trò từng mắt xích. **Sửa đúng:** dùng phân loại RCE cho 53770 và security bypass cho 53771; theo [hướng dẫn MSRC](https://www.microsoft.com/en-us/msrc/blog/2025/07/customer-guidance-for-sharepoint-vulnerability-cve-2025-53770), cài cập nhật mới nhất, **đổi ASP.NET machine keys** rồi khởi động lại IIS, thay vì chỉ “xem xét” xoay khóa như AI gợi ý.
 
 ## Kiểm tra theo đề
 
 - **Số mục:** 20; #01–#06 thuộc AI/LLM, vượt ngưỡng tối thiểu 5.
 - **Thời điểm công bố:** Từng mục có nguồn công khai trong khoảng 2022–2025, thuộc khoảng đề cho phép 2022–2026. Năm của CVE đôi khi khác ngày bài tư vấn được cập nhật; ngày công bố ghi theo nguồn đầu tiên nêu trong mục.
-- **Trường bắt buộc:** Mỗi mục có nguồn, mô tả, mức độ, hậu quả, cách khắc phục và một trường nhận diện lỗi trong lời giải thích của AI; trường chưa kiểm chứng vẫn để trống.
-- **Việc sinh viên tự thực hiện:** Đọc lại lời giải thích AI đã lưu trong [Appendix A](../Appendix_A_Prompt_Log.md), trích một nhận định AI sai/thiên lệch **thực sự có** cho từng mục và đối chiếu với nguồn. Nếu một mục không có sai sót quan sát được, cần hỏi AI bổ sung và lưu câu trả lời thật trước khi kết luận; không tự tạo “ảo giác” làm bằng chứng.
+- **Trường bắt buộc:** Cả 20 mục đều có nguồn, mô tả, mức độ, hậu quả, cách khắc phục và một nhận định sai trong lời giải thích của AI đã được đối chiếu nguồn.
+- **Bằng chứng lời giải thích của AI:** Prompt và output gốc cho từng mục được lưu trong [Appendix A](../Appendix_A_Prompt_Log.md); phần nhận xét tại mỗi mục trích đúng câu trả lời tương ứng và dẫn nguồn kiểm chứng.
