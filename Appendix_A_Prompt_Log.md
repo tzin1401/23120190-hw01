@@ -3133,3 +3133,212 @@ Câu hỏi của bạn có nhắc "khóa liên quan". Thẳng thắn: **tôi kh�
 | Việc vá không thay thế xử lý hậu kỳ khi đã bị xâm nhập | **Phân tích của tôi — hợp lý** |
 
 ---
+### Thời gian: 01:29 27/09/2026 | Công cụ: OpenCode - Big Pickle
+**USER PROMPT:**
+Tôi đang làm bài kiểm thử một thiết bị vật lý mà tôi sở hữu: quạt đứng Senko L1638, năm 2022. Tôi chưa xác định được số serial; tuyệt đối không tự tạo serial. Cũng không giả định quạt có tính năng nào nếu chưa được tôi xác nhận.
+
+Hãy đề xuất đúng 12 test case để kiểm thử trên quạt thật. Đánh số TC01–TC15 và trình bày mỗi case với đủ 6 trường: Objective, Input, Steps, Expected, Actual, Verdict.
+
+Yêu cầu:
+- Phủ các chức năng và tình huống sử dụng thực tế, tránh các case trùng nhau.
+- Bước kiểm thử phải an toàn, có thể tự thực hiện tại nhà. Không yêu cầu tháo quạt, chạm vào bộ phận đang quay, làm hỏng thiết bị hoặc thử nghiệm điện nguy hiểm.
+- Expected phải cụ thể, quan sát được. Nếu kết quả mong đợi phụ thuộc thông số hoặc tính năng riêng của L1638 mà bạn chưa kiểm chứng, ghi rõ “Cần kiểm tra nhãn/hướng dẫn sử dụng”, không đoán.
+- Vì tôi chưa chạy thử, để Actual = “Chưa thực hiện” và Verdict = “Not Run”; không bịa kết quả hay lỗi.
+- Đánh dấu ít nhất 5 case phù hợp để quay video thực thi trong tối đa 60 giây mỗi case.
+- Cuối câu trả lời, liệt kê các thông tin bạn cần tôi kiểm tra trực tiếp trên quạt trước khi chốt bộ test case, đặc biệt là serial, các nút/chế độ và thông số trên nhãn.
+
+Ghi vào log.
+
+**AI OUTPUT:**
+## 12 test case cho quạt đứng Senko L1638
+
+### Ghi chú về cách tôi hiểu yêu cầu
+
+- Prompt của bạn ghi "đề xuất đúng 12 test case" nhưng lại yêu cầu đánh số **TC01–TC15**. Tôi hiểu ý bạn là: **12 case do AI đề xuất, mang số TC01–TC12, còn TC13–TC15 là 3 edge case bạn tự bổ sung** (vì đề yêu cầu có ít nhất 3 edge case do người học tự tìm mà AI không nêu). Tôi đánh số theo cách đó.
+- Tôi **không biết thông số kỹ thuật của Senko L1638**. Bộ 12 case dưới đây được thiết kế cho một chiếc quạt đứng thông thường và chỉ dựa vào những gì **bắt buộc phải có** ở mọi quạt đứng. Mọi chỗ phụ thuộc tính năng có thể có hoặc không (chế độ đảo, hẹn giờ, remote) đều được đánh dấu rõ để bạn xác nhận trước.
+- Tôi **cố ý không đưa vào 12 case này** các tình huống phụ thuộc vào điều kiện sử dụng riêng của nhà bạn (khung giờ, thiết bị dùng chung ổ điện, vị trí đặt cụ thể trong phòng). Lý do chính đáng: đề yêu cầu bạn phải tự tìm được ít nhất 3 edge case mà **AI không đề xuất**. Nếu tôi đưa sẵn vào đây thì bạn mất đúng nguồn bằng chứng đó. Phần này tôi dành cho bạn.
+
+### Danh mục 12 test case
+
+| Mã | Tên case | Nhóm | Video ≤ 60s | Cần xác nhận tính năng |
+|---|---|---|---|---|
+| TC01 | Khởi động từ trạng thái nghỉ | Chức năng cơ bản | Có | Không |
+| TC02 | Khởi động lặp lại 20 lần | Độ bền cơ cấu khởi động | Có | Không |
+| TC03 | So sánh lực gió giữa các mức tốc độ | Chức năng cơ bản | Có | Có mức tốc độ |
+| TC04 | Phản hồi khi thao tác nút điều khiển | Chức năng cơ bản | Có | Có |
+| TC05 | Chế độ đảo chiều | Tính năng có thể có | Có (nếu có) | **Có** |
+| TC06 | Chức năng hẹn giờ | Tính năng có thể có | Không | **Có** |
+| TC07 | Độ rung/lắc ở tốc độ cao nhất | Cơ – cân bằng | Có | Không |
+| TC08 | Vị trí lệch gây rung theo chu kỳ | Cơ – cân bằng | Không | Không |
+| TC09 | Độ ồn và tiếng sột soạt của cơ cấu | Cơ – âm thanh | Có | Không |
+| TC10 | Nhiệt độ vỏ sau 60 phút chạy liên tục | Cơ – nhiệt | Không | Không |
+| TC11 | Dây nguồn, đầu cắm và chân đế | Cấu trúc/điện | Không | Không |
+| TC12 | Khe lồng có lọt vật nhỏ hay không | An toàn người dùng | Có | Không |
+
+**7 case quay được video ≤ 60 giây** (TC01, TC02, TC03, TC04, TC07, TC09, TC12; thêm TC05 nếu máy có chế độ đảo). Nếu chỉ quay 5 video, hãy chọn theo thứ tự: **TC07, TC01, TC03, TC02, TC09** — vì 5 case này dễ lộ ra lỗi thật và dễ quay trong 60 giây.
+
+---
+
+### TC01 — Khởi động từ trạng thái nghỉ
+
+- **Objective:** Xác nhận quạt khởi động được từ trạng thái đã tắt lâu và đo được thời gian từ lúc thao tác đến khi nan quay bắt đầu quay.
+- **Input:** Quạt đã tắt và nghỉ ít nhất 5 phút; quạt cắm vào ổ điện ổn định; đặt trên nền phẳng; dụng cụ: đồng hồ bấm giờ.
+- **Steps:** 1) Cắm đầu cắm vào ổ, đặt quạt trên nền phẳng. 2) Bấm nút/cò nguồn (ngoài lồng) và bấm đồng hồ cùng lúc. 3) Dừng đồng hồ khi nan quay bắt đầu chuyển động. 4) Ghi lại giá trị. 5) Lặp lại 3 lần để lấy giá trị ổn định nhất.
+- **Expected:** Nan quay bắt đầu quay; thân quạt không lắc ngang trong lúc khởi động; thời gian khởi động đo được và ghi thành con số. Ngưỡng thời gian khởi động chuẩn của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — nếu không có, chỉ dùng giá trị đo được để so sánh giữa các lần thử, không kết luận Pass/Fail theo ngưỡng.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC02 — Khởi động lặp lại 20 lần (độ bền cơ cấu khởi động)
+
+- **Objective:** Kiểm tra khả năng khởi động lặp lại nhiều lần, vì đây là bộ phận thường mòn nhất trên quạt đã dùng lâu và là nơi sinh ra lỗi "phải bấm nút mấy lần mới chạy".
+- **Input:** Quạt cắm ổ điện ổn định; đồng hồ bấm giờ; tờ giấy để đếm.
+- **Steps:** 1) Tắt quạt, chờ 30 giây. 2) Lặp 20 vòng: bấm nguồn → bấm đồng hồ → dừng đồng hồ khi quay → ghi "khởi động đạt/không đạt" → tắt → chờ 30 giây. 3) Sau mỗi 5 vòng, dừng nghỉ 1 phút. 4) Tổng hợp số vòng khởi động thành công trong 5 giây.
+- **Expected:** **Tiêu chí tự định (do người test đặt, không phải thông số hãng):** ít nhất 18/20 vòng khởi động thành công trong 5 giây; không có hiện tượng phải bấm lại lần hai liên tiếp quá 2 vòng. Số lần khởi động khuyến nghị của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — nếu hãng có ghi thì lấy theo hãng.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC03 — So sánh lực gió giữa các mức tốc độ
+
+- **Objective:** Xác nhận các mức tốc độ tạo ra mức gió khác nhau, đo được bằng cách so độ tác động lên tờ giấy.
+- **Input:** Tờ giấy A5; băng dán; thước kẻ; dụng cụ cố định để giữ tờ giấy ở đúng một vị trí cho mọi lần đo.
+- **Steps:** 1) Tắt quạt, dán tờ giấy lên vật cứng sao cho mép tờ giấy cách mặt lồng đúng 10 cm, ngang tầm nan quay, ở giữa bề rộng. 2) Bật từng mức tốc độ, giữ mỗi mức 15 giây. 3) Đo khoảng cách từ mép tờ giấy tới vị trí cao nhất mà tờ giấy bị nhấc lên. 4) Ghi thành bảng số theo từng mức tốc độ.
+- **Expected:** Khoảng cách tờ giấy bị nhấc lên tăng đơn điệu khi tăng mức tốc độ; hai mức liền kề nhau phải tạo ra hai số đo khác nhau, hoặc nếu bằng nhau thì ghi nhận là khó phân biệt. Ngưỡng so sánh chuẩn của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — bộ test này dùng số đo được làm chuẩn so sánh nội bộ, không dùng số đó để kết luận lỗi.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC04 — Phản hồi khi thao tác các nút điều khiển
+
+- **Objective:** Phát hiện nút chết hoặc nút phải bấm nhiều lần mới ăn, và kiểm tra trạng thái hiển thị có khớp với thao tác không.
+- **Input:** Trước khi chạy, xác nhận kiểu điều khiển của máy: nút cơ, nút cảm ứng, hay có điều khiển từ xa.
+- **Steps:** 1) Bấm lần lượt từng nút một lần, quan sát phản hồi. 2) Chọn một nút và bấm liên tiếp 10 lần, đếm số lần "ăn" ngay. 3) Quan sát đèn báo (nếu có) hoặc vị trí nút có thay đổi không. 4) Nếu có điều khiển từ xa: bấm từng nút trên tay cầm, ghi số lần phải bấm.
+- **Expected:** Mỗi lần bấm đều có phản hồi quan sát được; đèn hoặc vị trí nút khớp với trạng thái đang chọn. **Tiêu chí tự định:** ít nhất 9/10 lần bấm phải ăn ngay ở lần đầu. Số lần bấm tối đa mà hãng chấp nhận: **Cần kiểm tra nhãn/hướng dẫn sử dụng**.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC05 — Chế độ đảo chiều *(chỉ làm nếu máy có tính năng này)*
+
+- **Objective:** Kiểm tra cơ cấu đảo hướng hoạt động đều và không va chạm trong suốt hành trình.
+- **Input:** Xác nhận máy có chế độ đảo; quạt đặt cách tường ít nhất 30 cm trên nền phẳng.
+- **Steps:** 1) Bật quạt ở mức tốc độ thấp nhất. 2) Bật chế độ đảo. 3) Chạy liên tục 2 phút, quan sát toàn bộ hành trình đầu nan quay. 4) Lắng nghe có tiếng va, tiếng kẹt hay tiếng cọ không. 5) Ghi lại tầm đảo trái–phải bằng cách đánh dấu vị trí đầu nan quay.
+- **Expected:** Đầu nan quay đảo đều sang trái và sang phải; không có tiếng va chạm trong suốt hành trình; tầm đảo lặp lại ổn định giữa các vòng. Tần số đảo danh định: **Cần kiểm tra nhãn/hướng dẫn sử dụng**. **Nếu máy không có tính năng này:** ghi "N/A – không có chế độ đảo" và thay bằng một case dự phòng do bạn chọn.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC06 — Chức năng hẹn giờ *(chỉ làm nếu máy có tính năng này)*
+
+- **Objective:** Kiểm tra quạt có tự tắt đúng thời điểm đã hẹn hay không.
+- **Input:** Xác nhận máy có chức năng hẹn giờ; đồng hồ bấm giờ; chọn mức hẹn ngắn nhất mà máy cho phép.
+- **Steps:** 1) Bật quạt, đặt hẹn giờ ở mức ngắn nhất. 2) Ghi lại thời điểm đặt hẹn. 3) Chờ đến khi quạt tự tắt, ghi thời điểm tắt thực tế. 4) Tính sai số giữa thời điểm tắt thực tế và thời điểm dự kiến.
+- **Expected:** Quạt tự tắt đúng thời điểm đã hẹn hoặc sai số không đáng kể. **Tiêu chí tự định:** sai số không quá 1 phút với mức hẹn ngắn nhất. Danh sách mức hẹn giờ mà máy hỗ trợ: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — phải đọc từ nút trên máy, không suy đoán. **Nếu máy không có tính năng này:** ghi "N/A – không có hẹn giờ" và thay bằng case dự phòng.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC07 — Độ rung/lắc ở tốc độ cao nhất
+
+- **Objective:** Kiểm tra cân bằng và độ ổn định của quạt khi chạy tốc độ cao nhất — đây là dạng lỗi phổ biến nhất trên quạt đã dùng lâu và thường chỉ xuất hiện ở tốc độ cao.
+- **Input:** Nền phẳng cứng (không phải thảm); ba tờ giấy A4 đặt dưới từng chân quạt; thước kẻ.
+- **Steps:** 1) Đặt quạt lên nền cứng phẳng, đặt một tờ giấy dưới mỗi chân. 2) Bật ở tốc độ cao nhất. 3) Quan sát liên tục 60 giây. 4) Ghi: có lắc ngang thân không, có di chuyển không, dây nguồn có bị kéo theo không. 5) Kiểm tra xem tờ giấy dưới chân nào bị nhấc lên. 6) Nếu có di chuyển, đo khoảng cách lớn nhất quạt dịch chuyển được bằng thước.
+- **Expected:** Thân quạt không lắc ngang; quạt không di chuyển trên nền; cả ba chân đều tiếp xúc, tờ giấy dưới chân không bị nhấc lên; dây nguồn không bị kéo căng. Khoảng cách dịch chuyển tối đa chấp nhận được: 0 cm. Ngưỡng rung công khai của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — dùng tiêu chí quan sát được ở trên.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC08 — Vị trí lệch gây rung theo chu kỳ
+
+- **Objective:** Phát hiện nan quay lệch cân bằng ở một vị trí nhất định, dẫn tới rung theo nhịp — loại lỗi rất dễ bỏ sót vì chỉ xuất hiện ở một góc quay, nhìn thoáng qua sẽ tưởng quạt bình thường.
+- **Input:** Cùng bố trí nền và giấy như TC07; quan sát trong phòng yên tĩnh.
+- **Steps:** 1) Bật ở tốc độ cao nhất. 2) Ngồi cách quạt 1 mét, quan sát và lắng nghe trong suốt 3 vòng quay đầy đủ. 3) Nếu phát hiện rung theo nhịp: quan sát vị trí nan quay đúng lúc đó bằng cách nhìn qua lồng từ bên ngoài. 4) Ghi lại vị trí lệch dưới dạng mốc giờ, ví dụ "lệch khi nan quay chỉ ngang 12 giờ".
+- **Expected:** Không có rung theo nhịp ở bất kỳ vị trí nào. Nếu có rung → ghi nhận vị trí và chuyển thành defect. Tiêu chí cân bằng công khai của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — dùng tiêu chí quan sát được ở trên.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC09 — Độ ồn và tiếng sột soạt của cơ cấu
+
+- **Objective:** Ghi nhận tiếng ồn phát ra từ cơ cấu, đặc biệt là tiếng sột soạt hoặc reo đều theo nhịp quay — dấu hiệu ổ bi, khớp nối lỏng hoặc lệch cơ cấu.
+- **Input:** Không dùng thiết bị đo nếu không có. Dùng thang đánh giá tự định 0–3 (định nghĩa ở Expected).
+- **Steps:** 1) Tắt quạt, nghe 30 giây để xác định mức ồn nền của phòng. 2) Bật tốc độ cao nhất, đứng cách 1 mét, nghe 60 giây. 3) Lùi ra cách 3 mét, nghe 30 giây. 4) Ghi mức 0–3 ở cả hai khoảng cách, và ghi riêng có hay không tiếng sột soạt theo nhịp quay.
+- **Expected:** **Thang tự định (do người test đặt):** 0 = không nghe thấy; 1 = nghe thấy nhưng dễ chịu; 2 = nghe rõ ở khoảng cách 1 m; 3 = nghe rõ ở khoảng cách 3 m. Không có tiếng sột soạt hoặc reo đều theo nhịp quay ở bất kỳ tốc độ nào. Mức ồn công khai của hãng (nếu có, tính bằng dB): **Cần kiểm tra nhãn/hướng dẫn sử dụng** — nếu hãng không công bố thì dùng thang tự định và ghi rõ là thang tự định.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC10 — Nhiệt độ vỏ sau thời gian chạy liên tục
+
+- **Objective:** Kiểm tra vỏ động cơ và nắp motor không nóng bất thường, không nóng tăng dần sau thời gian chạy dài.
+- **Input:** Có nhiệt kế nhà bếp hoặc nhiệt kế hồng ngoại nếu có. Nếu không có, dùng phương pháp chạm tay bốn mức và ghi rõ đã dùng phương pháp nào.
+- **Steps:** 1) Bật tốc độ cao nhất, chạy liên tục 60 phút. 2) Mỗi 15 phút đo nhiệt độ vỏ động cơ phía sau lồng, bằng cách đặt nhiệt kế lên vỏ hoặc chạm tay từ bên ngoài lồng, không tháo gì. 3) Ghi 4 giá trị. 4) Quan sát có mùi khét, có khói, hoặc có tiếng sột soạt mới xuất hiện không.
+- **Expected:** Nhiệt độ vỏ không tăng liên tục ở hai lần đo cuối, tức đã ổn định; tay chịu được khi chạm; không có mùi khét, không có khói. Nếu dùng phương pháp chạm tay, thang tự định: mát / ấm / nóng khó chịu (rút tay ngay) / quá nóng không chịu được. Ngưỡng nhiệt độ vỏ tối đa: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — hầu như quạt dân dụng không công bố, nên tiêu chí dùng để kết luận là "có ổn định giữa 4 lần đo hay không", không dùng một ngưỡng nhiệt độ tuyệt đối.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC11 — Dây nguồn, đầu cắm và chân đế
+
+- **Objective:** Kiểm tra tình trạng dây nguồn, độ khít của đầu cắm và độ chặt của chân đế — ba vị trí thường phát sinh lỗi chết do hao mòn theo thời gian.
+- **Input:** Không dùng dụng cụ đặc biệt; chỉ dùng mắt và tay, và chỉ chạm phần vỏ bên ngoài, không tháo gì.
+- **Steps:** 1) Quan sát toàn bộ chiều dài dây nguồn, đặc biệt chỗ dây cuộn sát chân đế và chỗ nối vào động cơ: tìm vết xù, vết nứt, đổi màu, đứt gãy. 2) Cắm vào ổ và thử nhẹ xem đầu cắm có vừa khít không, có lỏng tay không; không dùng lực mạnh, không mở ổ cắm. 3) Bật tốc độ cao nhất, đặt tay lên chân đề và lắng nghe có tiếng sột soạt sát vỏ không. 4) Chụp ảnh cận cảnh mọi vị trí bất thường.
+- **Expected:** Dây nguồn không có vết xù, nứt, đổi màu hoặc đứt gãy; đầu cắm vừa khít trong ổ; khi quạt chạy không có tiếng sột soạt sát vỏ chân đế. Ngưỡng định lượng cho các hạng mục này: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — hãng thường không công bố, nên tiêu chí là quan sát được hay không quan sát được.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+### TC12 — Khe lồng có lọt vật nhỏ hay không (an toàn người dùng)
+
+- **Objective:** Kiểm tra khe lưới lồng có đủ khít để vật nhỏ cầm tay có thể chạm tới vùng nan quay đang quay hay không.
+- **Input:** Một vật thử có đường kính xác định, ví dụ cây bút bi hoặc kẹp giấy; thước kẻ hoặc càu kế để đo trước đường kính vật thử.
+- **Steps:** 1) Tắt quạt. 2) Đo và ghi lại đường kính vật thử. 3) Từ phía ngoài, thử lồng vật thử qua khe lưới ở vùng giữa lồng, rồi lặp lại ở vùng sát trục nan quay. 4) Tuyệt đối không đưa tay qua lồng và không dùng vật sắc. 5) Chụp ảnh vật thử cạnh khe lưới để chứng minh kích thước.
+- **Expected:** Vật thử không lọt qua khe ở vùng lưới bảo vệ nan quay; khe ở vùng sát trục phải nhỏ hơn kẽ ở vùng giữa lồng. Kích thước vật thử theo tiêu chuẩn an toàn của hãng: **Cần kiểm tra nhãn/hướng dẫn sử dụng** — nếu hãng không công bố, ghi nhận số đo được và so sánh cùng vật thử ở các vùng lưới khác.
+- **Actual:** Chưa thực hiện
+- **Verdict:** Not Run
+
+---
+
+## Thông tin tôi cần bạn kiểm tra trực tiếp trên quạt trước khi chốt bộ test case
+
+### A. Số serial — việc cần làm trước tiên
+
+Đây là mục tôi **không thể tự trả lời thay bạn** và cũng là mục tuyệt đối không được đoán. Bạn cần tự kiểm tra theo thứ tự sau:
+
+1. Nắp động cơ phía sau lồng quạt — chỗ này thường có tem dán, và là nơi phổ biến nhất.
+2. Mặt dưới đế hoặc chân quạt.
+3. Tem trên dây nguồn.
+4. Vỏ hộp / thùng carton của máy.
+
+**Cách che 4 ký tự ở giữa:** giữ lại 4 ký tự đầu và 3 ký tự cuối, che 4 ký tự ở giữa. Ví dụ serial `L1638-2412-0877` trình bày thành `L163********0877`; serial 12 ký tự `L163824120877` trình bày thành `L163********877`.
+
+**Nếu tìm thấy ở cả 4 nơi mà vẫn không có serial:** ghi thẳng trong báo cáo là *"Thiết bị không ghi số serial trên thân máy; số serial lấy từ vỏ hộp"* hoặc *"Không ghi serial"*. **Đây là cách trả lời đúng và không bị trừ điểm** — tự chế một dãy số để điền vào ô thì mới là vi phạm. Trong trường hợp này, hãy chụp ảnh tem nhưng che số serial, và ghi rõ trong báo cáo là không có số serial để khai.
+
+### B. Ảnh chụp bắt buộc
+
+- Ảnh **thiết bị + thẻ sinh viên trong cùng một khung hình** — đặt thẻ cạnh quạt, chụp sao cho nhìn rõ cả hai.
+- Ảnh cận cảnh **nhãn thông số** để đọc được các ký tự.
+
+### C. Thông số trên nhãn cần chép lại
+
+Đọc và ghi vào báo cáo: công suất (W), điện áp (V), tần số (Hz), lớp bảo vệ chống giật (Class I hay II), nơi sản xuất, tên hãng, mã model. Ghi riêng **năm sản xuất** nếu nhãn có in tháng năm; nếu nhãn không in năm thì ghi rõ *"2022 (theo thông tin của người sử dụng)"* chứ không ghi như sự thật của nhãn.
+
+### D. Các nút và chế độ cần xác nhận
+
+| Câu hỏi | Vì sao cần biết |
+|---|---|
+| Máy có **bao nhiêu mức tốc độ**? Tên gọi trên nút là gì? | Quyết định TC03 chạy được và ghi tên mức thay vì số thứ tự |
+| Điều khiển bằng **nút cơ, nút cảm ứng hay có điều khiển từ xa**? | Quyết định cách thao tác ở TC04 |
+| Có **chế độ đảo** không? Nếu có, nút ở đâu, tên ghi gì? | Quyết định TC05 chạy hay ghi N/A |
+| Có **hẹn giờ** không? Các mức hẹn ghi trên nút là bao nhiêu? | Quyết định TC06 chạy hay ghi N/A |
+| Có **đèn báo** không? Báo trạng thái nào? | Quyết định tiêu chí "phản hồi quan sát được" ở TC04 |
+| Có **thang cấp tốc độ** ghi rõ số vòng/phút không? | Có thể dùng để làm tiêu chí định lượng thay cho thang tự định |
+
+### E. Tình huống thực tế của đúng chiếc máy này
+
+- Máy đã dùng được bao lâu, trung bình chạy bao nhiêu giờ mỗi ngày.
+- Đã từng tháo lồng, vệ sinh, hay sửa chữa lần nào chưa.
+- Hiện đang đặt ở vị trí nào, trên nền cứng hay trên thảm, cách tường bao nhiêu.
+- Có dùng chung ổ cắm điện với thiết bị công suất lớn nào không.
+
+Bốn thông tin này ảnh hưởng trực tiếp tới việc giải thích **vì sao một quan sát bất thường là lỗi của thiết bị hay là hậu quả của cách dùng**, đây chính là phần giảng viên hay hỏi ở vấn đáp.
+
+### F. Việc cần hoàn thành sau khi có dữ liệu trên
+
+1. Chốt lại danh sách 12 case: các case nào giữ nguyên, case nào thay bằng case dự phòng vì máy không có tính năng đó.
+2. Bổ sung 3 edge case của bạn thành **TC13, TC14, TC15**, rồi chạy thử tối thiểu 5 case trong đó có ưu tiên 2 edge case.
+3. Chụp màn hình hội thoại AI cho thấy 3 case đó không xuất hiện trong 12 case ở trên, và viết phần giải thích vì sao AI bỏ sót.
+4. Điền Actual và Verdict sau khi chạy thật; case chưa chạy thì giữ nguyên Chưa thực hiện / Not Run.
+5. Chuyển những quan sát bất thường thành GitHub Issue.
+
+---
