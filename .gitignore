@@ -4,6 +4,7 @@ Thumbs.db
 *.swp
 *.swo
 ~$*
+.~lock.*#
 
 # Bản xuất lịch sử có thể tạo lại từ Git
 Git_Commit_Log.txt
