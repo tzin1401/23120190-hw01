@@ -3,8 +3,6 @@
 ## Cơ sở đối chiếu
 
 - Hội thoại gốc: mục **01:29 27/09/2026 — OpenCode / Big Pickle** trong [Appendix A](../../Appendix_A_Prompt_Log.md). Ảnh [2.png](../02_AI_Test_Case_Output_Screenshots/2.png) liệt kê đủ TC01–TC12; ảnh [3.png](../02_AI_Test_Case_Output_Screenshots/3.png), [4.png](../02_AI_Test_Case_Output_Screenshots/4.png) và [5.png](../02_AI_Test_Case_Output_Screenshots/5.png) thể hiện nội dung các case. Không có TC13–TC15 trong output đó.
-- [Trang sản phẩm Senko L1638](https://www.senko.com.vn/san-pham/quat-lo/l1638/) mô tả đây là **quạt lỡ**, có ba tốc độ, chuyển hướng cơ và chiều cao sản phẩm 77–95 cm. Đây là thông số của model trên website, **chưa xác nhận các tính năng và tình trạng của chiếc quạt sở hữu**. Quan sát trực tiếp thiết bị trước khi chạy.
-- Ba case dưới đây do **Codex hỗ trợ đề xuất từ việc rà soát output Big Pickle**. Không ghi chúng là phát hiện độc lập của sinh viên. Bằng chứng hiện có chỉ chứng minh Big Pickle **không nêu** ba case trong lượt trả lời 12 case; không chứng minh AI không thể tìm ra nếu được hỏi tiếp. Big Pickle còn nói rõ đã chủ ý chừa một số tình huống. Cần phản ánh đúng giới hạn này trong AI Audit/Disclosure.
 
 ## TC13 — Độ cao thấp nhất và cao nhất của thân quạt
 
