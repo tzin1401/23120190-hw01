@@ -9,7 +9,7 @@ Thiết bị đã chọn: **quạt Senko L1638**, năm **2022** theo thông tin 
 | `03_Edge_Cases/` | Phần giải thích bằng chữ cho **ít nhất 3 edge case bạn tự bổ sung**; đặt ảnh hội thoại chứng minh AI không nêu các case đó trong `AI_Omission_Screenshots/`. Ghi ID của từng case và lý do AI bỏ sót. |
 | `04_Test_Cases_Excel/` | Workbook `.xlsx` có **Test Cases / Checklist / Test Summary Report**. Bộ cuối cùng có **15 test case tổng cộng** với Objective, Input, Steps, Expected, Actual, Verdict; ghi `Not Run` cho case chưa thực thi. |
 | `05_Execution_Videos/` | Danh sách URL của **ít nhất 5 video YouTube Unlisted**, mỗi video **không quá 60 giây**, có giọng thuyết minh thật của bạn và liên kết rõ với ID test case. Có thể giữ bản video gốc ở đây nếu cần. |
-| `06_GitHub_Issues_Evidence/` | Ảnh chụp trang Issues trong repo GitHub của bạn, nhìn rõ username; liên kết Issue của các lỗi **thực sự quan sát được** với test case và video. Đề yêu cầu cố gắng tìm ít nhất 5 lỗi. |
+| `06_GitHub_Issues_Evidence/` <br> ![GitHub Issue Evidence](06_GitHub_Issues_Evidence/TC05_GitHub_Issue.png) | Ảnh chụp trang Issues trong repo GitHub của bạn, nhìn rõ username; liên kết Issue của các lỗi **thực sự quan sát được** với test case và video. Đề yêu cầu cố gắng tìm ít nhất 5 lỗi. |
 | `07_AI_Audit_Evidence/` | Ảnh AI output có viền đỏ/chú thích nếu dùng cách nộp này cho `[AI-02]`; giữ nguyên bản output gốc ở `02_AI_Test_Case_Output_Screenshots/`. |
 
 Prompt và output nguyên văn đã lưu trong [`Appendix_A_Prompt_Log.md`](../Appendix_A_Prompt_Log.md) ở thư mục gốc; **không tạo lại hoặc sửa lịch sử hội thoại**. Nếu dùng bộ 12 case AI vừa đề xuất, hãy tự bổ sung 3 edge case để đủ 15 và giữ bằng chứng AI đã bỏ sót chúng.

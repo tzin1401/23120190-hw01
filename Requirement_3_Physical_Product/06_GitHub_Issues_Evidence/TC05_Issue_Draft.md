@@ -47,3 +47,6 @@
 - Ghi số lần tái hiện, tốc độ quạt, vị trí tiếng động và nếu có thể thì đo/đánh dấu hai biên chuyển hướng.
 - Bổ sung số đo hoặc mô tả rõ hơn để người khác có thể tái hiện và đánh giá mức độ lỗi.
 - Khi đăng Issue thật, thay link file cục bộ bằng link video xem được từ GitHub hoặc YouTube; giữ ảnh/video bằng chứng do người kiểm thử tự tạo.
+
+## Bằng chứng ảnh GitHub Issue
+![GitHub Issue](TC05_GitHub_Issue.png)
