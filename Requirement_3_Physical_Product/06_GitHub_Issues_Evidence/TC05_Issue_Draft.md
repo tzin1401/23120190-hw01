@@ -1,6 +1,6 @@
 # Bản nháp GitHub Issue — TC05
 
-**Trạng thái:** Chưa đăng lên GitHub. Nội dung dưới đây ghi lại đúng quan sát do người kiểm thử cung cấp; cần xác nhận chi tiết trước khi kết luận lỗi.
+**Trạng thái:** Người kiểm thử xác nhận TC05 Fail với hiện tượng bên dưới. Đây vẫn là bản nháp, chưa đăng lên GitHub; mức độ và các số đo chi tiết chưa được xác định.
 
 ## Tiêu đề dự kiến
 
@@ -10,7 +10,7 @@
 
 ### Thiết bị và test case
 
-- Thiết bị: Senko L1638 (xác nhận lại trên tem của chiếc quạt).
+- Thiết bị: quạt Senko L1638 (theo thông tin người sở hữu); thiết bị không có số serial.
 - Test case: TC05 — chuyển hướng trái/phải.
 
 ### Điều kiện và bước tái hiện
@@ -29,11 +29,12 @@
 - Đầu quạt **có xu hướng quay nhiều về phía bên phải hơn**.
 - Quạt **phát ra tiếng động khi đầu quạt đi qua vị trí giữa**.
 - Chưa có số đo góc trái/phải, mô tả loại tiếng động, số lần lặp lại hoặc xác nhận âm thanh là va/cọ/kẹt bất thường.
+- **Verdict của TC05: Fail**, theo xác nhận của người kiểm thử.
 
 ### Bằng chứng
 
 - File video gốc: [`TC05.mp4`](../05_Execution_Videos/TC05.mp4).
-- URL video YouTube Unlisted: **[chưa cung cấp]**.
+- URL video YouTube: https://youtube.com/shorts/b-d0SKiaxsM (người đăng xác nhận đã đặt Không công khai).
 - Ảnh/số đo góc trái–phải: **[chưa cung cấp]**.
 
 ### Mức độ nghiêm trọng
@@ -44,5 +45,5 @@
 
 - Xác nhận tiếng động là tiếng cọ, va, kẹt bất thường hay chỉ là tiếng vận hành bình thường.
 - Ghi số lần tái hiện, tốc độ quạt, vị trí tiếng động và nếu có thể thì đo/đánh dấu hai biên chuyển hướng.
-- Điền `Actual` và `Verdict` của TC05 trong workbook sau khi xác nhận; các case TC03, TC04, TC07, TC14 cần kết quả riêng, không tự coi là Pass.
+- Bổ sung số đo hoặc mô tả rõ hơn để người khác có thể tái hiện và đánh giá mức độ lỗi.
 - Khi đăng Issue thật, thay link file cục bộ bằng link video xem được từ GitHub hoặc YouTube; giữ ảnh/video bằng chứng do người kiểm thử tự tạo.
