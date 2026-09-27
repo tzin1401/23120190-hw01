@@ -20,7 +20,7 @@
 - **Input:** Ổ cắm có công tắc hoặc ổ nối dài **có công tắc, còn nguyên vẹn, đúng định mức**; sàn phẳng; dây nguồn không căng; người và vật ở ngoài vùng quét của quạt. Nếu không có công tắc cấp điện phù hợp thì **chưa thực hiện**, không giật/rút phích cắm đang tải để giả lập mất điện.
 - **Steps:** (1) Kiểm tra dây, phích và công tắc khi chưa cấp điện. (2) Bật quạt ở mức cao nhất, giữ tay và đồ vật xa lồng. (3) Dùng công tắc ngoài ngắt điện, xác nhận cánh dừng hẳn. (4) Sau ít nhất 30 giây, đứng ngoài tầm quạt và cấp điện trở lại bằng chính công tắc đó. (5) Ghi quạt có tự chạy lại hay không, trạng thái tốc độ và có âm thanh/mùi/tia lửa bất thường không. (6) Tắt quạt bằng nút OFF của quạt sau khi quan sát.
 - **Expected:** Khi mất điện, cánh giảm tốc rồi dừng; khi điện trở lại không có khói, mùi khét, tiếng bất thường hoặc sự cố của công tắc/ổ. **Việc quạt tự khởi động lại hay chờ thao tác chưa có tiêu chí hãng được kiểm chứng:** ghi nhận thực tế, đối chiếu hướng dẫn sử dụng rồi mới đánh giá hành vi này; không tự kết luận tự khởi động là lỗi.
-- **Actual:** Đã thực hiện trên quạt thật; người kiểm thử xác nhận đạt. Chưa ghi chi tiết trạng thái khi cấp điện trở lại trong bản phân tích này; xem video `TC14.mp4`.
+- **Actual:** Người kiểm thử ngắt điện bằng cách rút phích rồi cắm lại; quạt tự chạy ổn định ở mức tốc độ đã chọn. Cách thao tác này khác Steps 3–4 vốn yêu cầu dùng công tắc ngoài; không lặp lại thao tác rút/cắm để bổ sung bằng chứng.
 - **Verdict:** Pass (theo xác nhận của người kiểm thử).
 - **Vì sao không có trong 12 case:** TC01/TC02 kiểm tra khởi động bằng nút điều khiển khi nguồn vẫn có; TC11 chỉ kiểm tra tình trạng dây/phích. Không case nào thử **chuyển trạng thái nguồn cấp** khi quạt đang chạy.
 
@@ -36,7 +36,7 @@
 
 ## Giới hạn bằng chứng và phần phải hoàn tất
 
-1. Ảnh hội thoại gốc [1.png](../02_AI_Test_Case_Output_Screenshots/1.png)–[7.png](../02_AI_Test_Case_Output_Screenshots/7.png) đã có. Ảnh **2.png** là bằng chứng gọn nhất cho danh sách chỉ có TC01–TC12. Nên tự chụp thêm một ảnh đối chiếu nguyên màn hình nếu giảng viên yêu cầu chỉ rõ từng case vắng mặt; không chỉnh sửa ảnh gốc để tạo bằng chứng.
-2. Người sở hữu xác nhận thiết bị là quạt Senko L1638, năm 2022 và **không có số serial**. Cần đối chiếu model/năm trên tem nếu tem có ghi, đồng thời xác nhận tính năng chỉnh cao và chuyển hướng trên quạt thật; không tạo số serial giả.
+1. Ảnh hội thoại gốc [1.png](../02_AI_Test_Case_Output_Screenshots/1.png)–[7.png](../02_AI_Test_Case_Output_Screenshots/7.png) đã có. Ảnh **2.png** cho thấy danh sách AI chỉ có TC01–TC12, dùng làm bằng chứng đối chiếu với TC13–TC15; không chỉnh sửa ảnh gốc để tạo bằng chứng.
+2. Người sở hữu xác nhận thiết bị là quạt Senko L1638, năm 2022, **không có số serial**, có hẹn giờ, chỉnh cao và chuyển hướng. Cần đối chiếu model/năm trên tem nếu tem có ghi; không tạo số serial giả.
 3. Điền Actual/Verdict sau khi thử thật; quay ít nhất 5 video, mỗi video tối đa 60 giây và có giọng của chính bạn. Chỉ tạo GitHub Issue cho lỗi đã quan sát, kèm video/ảnh thật. Ảnh quạt và thẻ sinh viên phải cùng một khung hình do bạn tự chụp.
 4. Để kiểm tra chặt hơn yêu cầu “AI Tool could NOT find”, hãy yêu cầu **chính Big Pickle** tự tìm thêm các tình huống biên cho L1638 mà không tiết lộ trước TC13–TC15, rồi lưu prompt/output và ảnh màn hình thật. Nếu AI nêu được case nào trong ba case này, case đó không còn là bằng chứng AI đã bỏ sót sau khi được hỏi sâu; cần chọn case khác và cập nhật cả phân tích lẫn workbook. Chỉ riêng lượt trả lời 12 case hiện tại chưa đủ để khẳng định AI không thể tìm ra chúng.
