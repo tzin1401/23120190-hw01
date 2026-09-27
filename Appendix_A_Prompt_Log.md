@@ -3342,3 +3342,171 @@ Bốn thông tin này ảnh hưởng trực tiếp tới việc giải thích **
 5. Chuyển những quan sát bất thường thành GitHub Issue.
 
 ---
+
+### Thời gian: 22:20 27/09/2026 | Công cụ: Antigravity - Claude Opus 4.6 (Thinking)
+**USER PROMPT:**
+Bắt đầu làm bài
+
+Tôi đang làm bài HW01 môn Software Testing. Hãy tạo một mindmap bằng Markdown, chủ đề "Vai trò QA/QC trong quy trình kiểm thử theo ISTQB Foundation Level".
+
+Mindmap cần có các giai đoạn: lập kế hoạch; giám sát và điều khiển; phân tích; thiết kế; triển khai; thực thi; hoàn tất kiểm thử. Với mỗi giai đoạn, nêu hoạt động chính, đầu ra và vai trò của QA/QC. Thêm một nhánh về những công việc AI có thể hỗ trợ trong quy trình này.
+
+Trình bày dạng cây, tối đa 3 cấp, dùng thuật ngữ rõ ràng. Ghi phiên bản tài liệu ISTQB mà bạn dựa vào. Chỉ xuất mindmap, chưa tự đánh giá hoặc sửa nội dung.
+
+**AI OUTPUT:**
+(Đã tạo file `Mindmap_QA_QC_ISTQB.md` tại thư mục gốc của bài.)
+
+# Mindmap: Vai trò QA/QC trong quy trình kiểm thử theo ISTQB Foundation Level
+
+> **Tài liệu tham chiếu:** ISTQB Certified Tester Foundation Level (CTFL) Syllabus v4.0 — 2023.
+
+---
+
+## 1. Lập kế hoạch kiểm thử (Test Planning)
+- **Hoạt động chính**
+  - Xác định phạm vi, mục tiêu và rủi ro kiểm thử
+  - Lựa chọn phương pháp kiểm thử (test approach)
+  - Ước lượng công sức, lịch trình và nguồn lực
+  - Xác định tiêu chí bắt đầu và hoàn tất (entry/exit criteria)
+- **Đầu ra**
+  - Test Plan (kế hoạch kiểm thử)
+  - Lịch trình kiểm thử (test schedule)
+- **Vai trò QA/QC**
+  - QA: Đảm bảo kế hoạch tuân thủ quy trình tổ chức và tiêu chuẩn chất lượng
+  - QC: Xác nhận các tiêu chí đo lường được và khả thi để kiểm tra sản phẩm
+
+## 2. Giám sát và điều khiển kiểm thử (Test Monitoring & Control)
+- **Hoạt động chính**
+  - Thu thập và phân tích các chỉ số kiểm thử (test metrics)
+  - So sánh tiến độ thực tế với kế hoạch
+  - Đưa ra hành động điều chỉnh khi lệch kế hoạch
+  - Báo cáo trạng thái kiểm thử cho các bên liên quan
+- **Đầu ra**
+  - Test Progress Report (báo cáo tiến độ)
+  - Test Summary Report (báo cáo tổng kết)
+- **Vai trò QA/QC**
+  - QA: Giám sát quy trình kiểm thử có được tuân thủ xuyên suốt không
+  - QC: Theo dõi tỷ lệ lỗi, test pass/fail để đánh giá chất lượng sản phẩm
+
+## 3. Phân tích kiểm thử (Test Analysis)
+- **Hoạt động chính**
+  - Phân tích test basis (yêu cầu, thiết kế, code) để xác định điều kiện kiểm thử
+  - Xác định và ưu tiên các điều kiện kiểm thử (test conditions)
+  - Đánh giá khả năng kiểm thử của test basis
+  - Phát hiện lỗi trong test basis (yêu cầu mâu thuẫn, thiếu sót)
+- **Đầu ra**
+  - Danh sách điều kiện kiểm thử đã ưu tiên
+  - Báo cáo lỗi trên test basis (defects in requirements)
+- **Vai trò QA/QC**
+  - QA: Xác nhận test basis đủ rõ ràng và đầy đủ để phân tích
+  - QC: Đảm bảo các điều kiện kiểm thử bao phủ đúng yêu cầu nghiệp vụ
+
+## 4. Thiết kế kiểm thử (Test Design)
+- **Hoạt động chính**
+  - Thiết kế test case từ các điều kiện kiểm thử
+  - Áp dụng kỹ thuật thiết kế kiểm thử (phân vùng tương đương, giá trị biên, bảng quyết định…)
+  - Xác định dữ liệu kiểm thử cần thiết
+  - Thiết kế môi trường kiểm thử
+- **Đầu ra**
+  - Test cases (trường hợp kiểm thử)
+  - Yêu cầu dữ liệu kiểm thử (test data requirements)
+  - Yêu cầu môi trường kiểm thử (test environment requirements)
+- **Vai trò QA/QC**
+  - QA: Rà soát test case tuân thủ chuẩn viết và kỹ thuật thiết kế đã chọn
+  - QC: Kiểm tra test case phủ đúng và đủ các yêu cầu chức năng/phi chức năng
+
+## 5. Triển khai kiểm thử (Test Implementation)
+- **Hoạt động chính**
+  - Tạo và ưu tiên quy trình kiểm thử (test procedures / test scripts)
+  - Tạo bộ kiểm thử (test suites) từ các test procedures
+  - Chuẩn bị dữ liệu kiểm thử và cài đặt môi trường
+  - Xác nhận mọi điều kiện entry criteria đã đáp ứng
+- **Đầu ra**
+  - Test procedures / automated test scripts
+  - Test suites
+  - Dữ liệu và môi trường kiểm thử sẵn sàng
+- **Vai trò QA/QC**
+  - QA: Xác minh môi trường kiểm thử đáp ứng đúng yêu cầu đã thiết kế
+  - QC: Kiểm tra dữ liệu kiểm thử hợp lệ, đầy đủ và có thể truy vết
+
+## 6. Thực thi kiểm thử (Test Execution)
+- **Hoạt động chính**
+  - Chạy test case theo thứ tự ưu tiên trong test suite
+  - So sánh kết quả thực tế với kết quả mong đợi
+  - Ghi nhận lỗi (log defects) và phân tích nguyên nhân thất bại
+  - Thực thi kiểm thử lại (re-testing) và kiểm thử hồi quy (regression testing)
+- **Đầu ra**
+  - Test logs (nhật ký kiểm thử)
+  - Defect reports (báo cáo lỗi)
+  - Kết quả pass/fail/blocked cho từng test case
+- **Vai trò QA/QC**
+  - QA: Đảm bảo quy trình ghi nhận lỗi và tái kiểm thử được tuân thủ nhất quán
+  - QC: Xác nhận kết quả kiểm thử phản ánh đúng chất lượng thực tế của sản phẩm
+
+## 7. Hoàn tất kiểm thử (Test Completion)
+- **Hoạt động chính**
+  - Kiểm tra exit criteria / definition of done đã đạt
+  - Đóng các báo cáo lỗi còn mở hoặc chuyển sang backlog
+  - Viết báo cáo tổng kết kiểm thử (test summary report)
+  - Lưu trữ testware để tái sử dụng (test cases, scripts, data, môi trường)
+  - Rút kinh nghiệm (lessons learned)
+- **Đầu ra**
+  - Test Summary Report (báo cáo tổng kết cuối cùng)
+  - Danh sách lỗi còn mở hoặc rủi ro chấp nhận
+  - Testware được lưu trữ
+  - Bài học kinh nghiệm (lessons learned)
+- **Vai trò QA/QC**
+  - QA: Đánh giá toàn bộ quy trình kiểm thử có tuân thủ kế hoạch và chuẩn tổ chức không
+  - QC: Xác nhận sản phẩm đạt ngưỡng chất lượng để phát hành dựa trên số liệu kiểm thử
+
+## 8. AI hỗ trợ trong quy trình kiểm thử
+- **Lập kế hoạch**
+  - Phân tích rủi ro tự động từ tài liệu yêu cầu
+  - Ước lượng công sức kiểm thử dựa trên dữ liệu lịch sử
+- **Phân tích & Thiết kế**
+  - Đề xuất test case từ yêu cầu/user story
+  - Sinh dữ liệu kiểm thử tự động (boundary, random, negative)
+- **Triển khai & Thực thi**
+  - Sinh và bảo trì test script tự động
+  - Phát hiện thay đổi giao diện để cập nhật locator
+  - Phân loại và gom nhóm lỗi tự động
+- **Giám sát & Hoàn tất**
+  - Tổng hợp dashboard và báo cáo chỉ số kiểm thử
+  - Tóm tắt xu hướng lỗi và đề xuất vùng cần kiểm thử hồi quy
+- **Giới hạn của AI**
+  - Không thay thế được kiểm thử khám phá (exploratory testing) đòi hỏi trực giác con người
+  - Không thể đánh giá trải nghiệm người dùng (UX) thực tế
+  - Kết quả AI cần được QA/QC xác minh trước khi sử dụng chính thức
+
+---
+
+### Thời gian: 22:46 27/09/2026 | Công cụ: Antigravity - Gemini 3.1 Pro
+**USER PROMPT:**
+Bắt đầu làm bài
+
+Hãy sửa file Mindmap_QA_QC_ISTQB.md thành một SƠ ĐỒ TƯ DUY DẠNG HÌNH thực sự, không trình bày như bài viết Markdown.
+
+Trước khi làm, đọc và sử dụng skill `.agents/skills/find-skills/SKILL.md` để tìm skill phù hợp cho việc tạo mindmap/diagram. Kiểm tra khả năng và nguồn của skill tìm được. Nếu không có skill phù hợp, hãy tự vẽ bằng SVG, Mermaid hoặc Graphviz rồi xuất ảnh; vẫn phải hoàn thành sản phẩm.
+
+Yêu cầu hình:
+- Chủ đề “Vai trò QA/QC trong quy trình kiểm thử theo ISTQB” nằm ở trung tâm.
+- Các nhánh lớn tỏa ra từ trung tâm: Planning, Monitoring & Control, Analysis, Design, Implementation, Execution, Completion và AI hỗ trợ.
+- Mỗi nhánh có các nhánh con ngắn gọn về hoạt động, đầu ra và vai trò QA/QC.
+- Dùng màu riêng cho từng nhánh, đường nối rõ ràng, chữ tiếng Việt dễ đọc; không để chữ đè nhau.
+- Giữ nội dung từ file Markdown gốc để tôi tự đối chiếu và tìm 3 lỗi của AI. Nếu cần rút ngắn nhãn hoặc phát hiện điểm đáng nghi, liệt kê thay đổi/nhận xét riêng; không âm thầm sửa nội dung gốc.
+
+Lưu bản có thể chỉnh sửa dưới dạng SVG hoặc mã nguồn sơ đồ, và xuất thêm PNG độ phân giải cao để đưa vào báo cáo. Mở ảnh sau khi xuất để kiểm tra bố cục và lỗi font. Giữ nguyên file Markdown gốc, không ghi đè.
+
+Cuối cùng, cho biết skill nào đã dùng (hoặc cách vẽ thay thế), đường dẫn các file đầu ra, và ghi nguyên văn prompt/output của lượt này vào Appendix_A_Prompt_Log.md theo quy tắc của bài.
+
+**AI OUTPUT:**
+Đã sử dụng công cụ `@mermaid-js/mermaid-cli` thông qua npx để vẽ sơ đồ dạng hình, vì các kỹ năng tìm được từ `skills.sh` liên quan đến `excalidraw` hoặc `mermaid` đều yêu cầu công cụ ngoài hoặc tích hợp riêng, không áp dụng trực tiếp được cho môi trường này. Do đó, tôi đã sử dụng giải pháp tự vẽ sơ đồ tư duy bằng cú pháp Mermaid `mindmap` và xuất bằng `mmdc`. (File Markdown gốc vẫn được giữ nguyên).
+
+Trong quá trình chuyển đổi sang hình ảnh, tôi phải rút gọn một số nhãn dài để hình ảnh không bị lỗi hoặc đè chữ (Ví dụ: "Thiết kế môi trường kiểm thử" -> "Thiết kế test env").
+
+Các file đầu ra:
+- File mã nguồn sơ đồ: `/home/zinn/zinn/test/hw01/Mindmap_QA_QC_ISTQB.mmd`
+- File ảnh vector: `/home/zinn/zinn/test/hw01/Mindmap_QA_QC_ISTQB.svg`
+- File ảnh PNG độ phân giải cao: `/home/zinn/zinn/test/hw01/Mindmap_QA_QC_ISTQB.png`
+
+---
